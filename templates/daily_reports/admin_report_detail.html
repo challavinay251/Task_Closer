@@ -1,0 +1,905 @@
+
+{% extends "admin/base.html" %}
+
+{% block title %}Report Details{% endblock %}
+{% block page_heading %}Report Details{% endblock %}
+{% block reports_active %}active{% endblock %}
+
+{% block extra_style %}
+<style>
+    .detail-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 25px;
+    }
+
+    .detail-header h2 {
+        font-size: 25px;
+        font-weight: 750;
+        color: #172b45;
+        margin-bottom: 7px;
+    }
+
+    .detail-header p {
+        color: #718096;
+        margin: 0;
+        font-size: 13px;
+    }
+
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 17px;
+        border: 1px solid #dce5ef;
+        border-radius: 9px;
+        color: #234b78;
+        background: #fff;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+    .back-btn:hover {
+        background: #f1f5fa;
+        color: #173653;
+    }
+
+    .detail-card {
+        background: #fff;
+        border: 1px solid #e8edf4;
+        border-radius: 14px;
+        padding: 24px;
+        margin-bottom: 22px;
+    }
+
+    .section-title {
+        font-size: 17px;
+        font-weight: 750;
+        color: #172b45;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-title i {
+        color: #234b78;
+    }
+
+    .employee-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 22px;
+    }
+
+    .employee-avatar {
+        width: 55px;
+        height: 55px;
+        border-radius: 50%;
+        background: #eaf0f8;
+        color: #234b78;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+
+    .employee-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .employee-info h4 {
+        font-size: 17px;
+        font-weight: 700;
+        margin: 0 0 5px;
+        color: #172b45;
+    }
+
+    .employee-info p {
+        font-size: 13px;
+        color: #718096;
+        margin: 0;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .info-item {
+        background: #f7f9fc;
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    .info-label {
+        display: block;
+        color: #718096;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 7px;
+    }
+
+    .info-value {
+        color: #172b45;
+        font-size: 14px;
+        font-weight: 650;
+        overflow-wrap: anywhere;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 6px 11px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        background: #fff4dc;
+        color: #986500;
+    }
+
+    .status-approved {
+        background: #e4f7ed;
+        color: #16804a;
+    }
+
+    .status-rejected {
+        background: #fdeaea;
+        color: #c0392b;
+    }
+
+    .status-revision {
+        background: #f0eaff;
+        color: #7042b5;
+    }
+
+    .status-draft {
+        background: #f0f2f5;
+        color: #64748b;
+    }
+
+    .content-label {
+        font-size: 13px;
+        font-weight: 700;
+        color: #718096;
+        margin-bottom: 8px;
+    }
+
+    .content-text {
+        color: #34445a;
+        font-size: 14px;
+        line-height: 1.8;
+        white-space: pre-line;
+        overflow-wrap: anywhere;
+    }
+
+    .work-entry {
+        border: 1px solid #e8edf4;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 18px;
+    }
+
+    .work-entry:last-child {
+        margin-bottom: 0;
+    }
+
+    .work-entry-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+
+    .work-entry-header h4 {
+        font-size: 16px;
+        font-weight: 750;
+        color: #172b45;
+        margin: 0;
+    }
+
+    .hours-badge {
+        background: #eaf0f8;
+        color: #234b78;
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .task-progress-info {
+        background: #f7f9fc;
+        border: 1px solid #e8edf4;
+        border-radius: 9px;
+        padding: 12px;
+        margin: 14px 0;
+    }
+
+    .task-progress-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        font-size: 12px;
+        font-weight: 650;
+        color: #475569;
+        margin-bottom: 8px;
+    }
+
+    .task-progress-track {
+        height: 7px;
+        background: #e5eaf1;
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .task-progress-fill {
+        height: 100%;
+        background: #234b78;
+        border-radius: 20px;
+    }
+
+    .evidence-title {
+        color: #172b45;
+        font-size: 13px;
+        font-weight: 700;
+        margin: 20px 0 12px;
+    }
+
+    .evidence-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 13px;
+    }
+
+    .evidence-item {
+        border: 1px solid #e8edf4;
+        border-radius: 10px;
+        overflow: hidden;
+        background: #f7f9fc;
+    }
+
+    .evidence-item img {
+        width: 100%;
+        height: 145px;
+        object-fit: cover;
+        display: block;
+    }
+
+    .evidence-caption {
+        padding: 9px;
+        font-size: 12px;
+        color: #64748b;
+        overflow-wrap: anywhere;
+    }
+
+    .video-evidence {
+        width: 100%;
+        max-width: 450px;
+        border-radius: 10px;
+        background: #111;
+        display: block;
+    }
+
+    .empty-evidence {
+        color: #8a96a8;
+        font-size: 13px;
+        padding: 12px;
+        background: #f7f9fc;
+        border-radius: 8px;
+    }
+
+    .feedback-box {
+        background: #f7f9fc;
+        border-left: 4px solid #234b78;
+        border-radius: 8px;
+        padding: 16px;
+        color: #34445a;
+        font-size: 14px;
+        line-height: 1.7;
+        white-space: pre-line;
+        overflow-wrap: anywhere;
+    }
+
+    .review-textarea {
+        border: 1px solid #dce5ef;
+        border-radius: 9px;
+        font-size: 13px;
+        padding: 13px;
+        resize: vertical;
+    }
+
+    .review-textarea:focus {
+        border-color: #234b78;
+        box-shadow: 0 0 0 3px rgba(35, 75, 120, .10);
+    }
+
+    .review-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .review-actions .btn {
+        border-radius: 8px;
+        padding: 10px 16px;
+        font-size: 12px;
+        font-weight: 650;
+    }
+
+    .review-info {
+        color: #718096;
+        font-size: 12px;
+        margin-top: 12px;
+    }
+
+    .review-note {
+        background: #f7f9fc;
+        border: 1px solid #e8edf4;
+        padding: 14px;
+        border-radius: 9px;
+        color: #64748b;
+        font-size: 12px;
+        line-height: 1.7;
+        margin-top: 15px;
+    }
+
+    @media (max-width: 768px) {
+        .detail-card {
+            padding: 18px;
+        }
+
+        .info-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 480px) {
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .detail-header h2 {
+            font-size: 21px;
+        }
+
+        .work-entry {
+            padding: 15px;
+        }
+
+        .work-entry-header {
+            flex-direction: column;
+        }
+
+        .review-actions {
+            flex-direction: column;
+        }
+
+        .review-actions .btn {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<!-- PAGE HEADER -->
+
+<div class="detail-header">
+
+    <div>
+        <h2>Daily Report Details</h2>
+        <p>Review employee work activities and submitted evidence.</p>
+    </div>
+
+    <a href="{% url 'daily_reports:admin_daily_reports' %}"
+       class="back-btn">
+        <i class="bi bi-arrow-left"></i>
+        Back to Reports
+    </a>
+
+</div>
+
+
+<!-- EMPLOYEE AND REPORT INFORMATION -->
+
+<div class="detail-card">
+
+    <div class="section-title">
+        <i class="bi bi-person-badge"></i>
+        Employee Information
+    </div>
+
+    <div class="employee-info">
+
+        <div class="employee-avatar">
+
+            {% if report.employee.user.profile_picture %}
+                <img src="{{ report.employee.user.profile_picture.url }}"
+                     alt="Employee profile">
+            {% else %}
+                <i class="bi bi-person"></i>
+            {% endif %}
+
+        </div>
+
+        <div>
+            <h4>
+                {{ report.employee.user.get_full_name|default:report.employee.user.username }}
+            </h4>
+
+            <p>
+                Employee ID: {{ report.employee.employee_id }}
+                &nbsp; | &nbsp;
+                {{ report.employee.designation }}
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="info-grid">
+
+        <div class="info-item">
+            <span class="info-label">Report Date</span>
+            <div class="info-value">
+                {{ report.report_date|date:"d M Y" }}
+            </div>
+        </div>
+
+        <div class="info-item">
+            <span class="info-label">Department</span>
+            <div class="info-value">
+                {{ report.employee.department }}
+            </div>
+        </div>
+
+        <div class="info-item">
+            <span class="info-label">Report Status</span>
+            <div class="info-value">
+                <span class="status-badge
+                    {% if report.status == 'APPROVED' %}status-approved
+                    {% elif report.status == 'REJECTED' %}status-rejected
+                    {% elif report.status == 'REVISION' %}status-revision
+                    {% elif report.status == 'DRAFT' %}status-draft
+                    {% endif %}">
+                    {{ report.get_status_display }}
+                </span>
+            </div>
+        </div>
+
+        <div class="info-item">
+            <span class="info-label">Submitted At</span>
+            <div class="info-value">
+                {% if report.submitted_at %}
+                    {{ report.submitted_at|date:"d M Y, h:i A" }}
+                {% else %}
+                    Not submitted
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="info-item">
+            <span class="info-label">Reviewed By</span>
+            <div class="info-value">
+                {% if report.reviewed_by %}
+                    {{ report.reviewed_by.get_full_name|default:report.reviewed_by.username }}
+                {% else %}
+                    Not reviewed
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="info-item">
+            <span class="info-label">Total Work Activities</span>
+            <div class="info-value">
+                {{ report.work_entries.count }}
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- DAILY WORK SUMMARY -->
+
+<div class="detail-card">
+
+    <div class="section-title">
+        <i class="bi bi-file-text"></i>
+        Daily Work Summary
+    </div>
+
+    <div class="mb-4">
+        <div class="content-label">Work Summary</div>
+        <div class="content-text">{{ report.summary }}</div>
+    </div>
+
+    <div class="mb-4">
+        <div class="content-label">Challenges Faced</div>
+        <div class="content-text">
+            {% if report.challenges %}
+                {{ report.challenges }}
+            {% else %}
+                No challenges reported.
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <div class="content-label">Pending Work</div>
+        <div class="content-text">
+            {% if report.pending_work %}
+                {{ report.pending_work }}
+            {% else %}
+                No pending work reported.
+            {% endif %}
+        </div>
+    </div>
+
+    <div>
+        <div class="content-label">Tomorrow's Plan</div>
+        <div class="content-text">
+            {% if report.tomorrow_plan %}
+                {{ report.tomorrow_plan }}
+            {% else %}
+                No plan provided.
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+
+
+<!-- WORK ACTIVITIES AND EVIDENCE -->
+
+<div class="detail-card">
+
+    <div class="section-title">
+        <i class="bi bi-list-check"></i>
+        Work Activities & Evidence
+    </div>
+
+    {% for entry in report.work_entries.all %}
+
+        <div class="work-entry">
+
+            <div class="work-entry-header">
+
+                <div>
+                    <h4>
+                        {{ forloop.counter }}. {{ entry.title }}
+                    </h4>
+
+                    {% if entry.task %}
+                        <small class="text-muted">
+                            Related Task: {{ entry.task.title }}
+                        </small>
+                    {% else %}
+                        <small class="text-muted">
+                            No task linked
+                        </small>
+                    {% endif %}
+                </div>
+
+                {% if entry.hours_spent %}
+                    <span class="hours-badge">
+                        <i class="bi bi-clock"></i>
+                        {{ entry.hours_spent }} Hours
+                    </span>
+                {% endif %}
+
+            </div>
+
+
+            <!-- TASK PROGRESS -->
+
+            {% if entry.task and entry.task_progress != None %}
+
+                <div class="task-progress-info">
+
+                    <div class="task-progress-top">
+                        <span>Reported Task Progress</span>
+                        <span>{{ entry.task_progress }}%</span>
+                    </div>
+
+                    <div class="task-progress-track">
+                        <div class="task-progress-fill"
+                             style="width: {{ entry.task_progress }}%;">
+                        </div>
+                    </div>
+
+                    <small class="text-muted d-block mt-2">
+                        Current task progress: {{ entry.task.progress }}%
+                    </small>
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- ACTIVITY DESCRIPTION -->
+
+            <div class="content-label">Activity Description</div>
+            <div class="content-text">{{ entry.description }}</div>
+
+
+            <!-- IMAGES -->
+
+            <div class="evidence-title">
+                <i class="bi bi-images"></i>
+                Uploaded Images
+            </div>
+
+            {% with images=entry.images.all %}
+
+                {% if images %}
+
+                    <div class="evidence-grid">
+
+                        {% for image in images %}
+
+                            <div class="evidence-item">
+
+                                <a href="{{ image.image.url }}" target="_blank" rel="noopener noreferrer">
+
+                                    <img src="{{ image.image.url }}"
+                                         alt="{{ image.caption|default:entry.title }}">
+
+                                </a>
+
+                                {% if image.caption %}
+                                    <div class="evidence-caption">
+                                        {{ image.caption }}
+                                    </div>
+                                {% endif %}
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="empty-evidence">
+                        No images uploaded.
+                    </div>
+
+                {% endif %}
+
+            {% endwith %}
+
+
+            <!-- VIDEO -->
+
+            {% if entry.video %}
+
+                <div class="evidence-title">
+                    <i class="bi bi-camera-video"></i>
+                    Video Evidence
+                </div>
+
+                <video class="video-evidence"
+                       controls
+                       preload="metadata">
+
+                    <source src="{{ entry.video.url }}">
+
+                    Your browser does not support video playback.
+
+                </video>
+
+            {% endif %}
+
+        </div>
+
+    {% empty %}
+
+        <div class="empty-evidence">
+            No work activities found in this report.
+        </div>
+
+    {% endfor %}
+
+</div>
+
+
+<!-- ADMIN REVIEW AND FEEDBACK -->
+
+<div class="detail-card">
+
+    <div class="section-title">
+        <i class="bi bi-clipboard-check"></i>
+        Admin Review & Feedback
+    </div>
+
+
+    <!-- PREVIOUS FEEDBACK -->
+
+    {% if report.admin_feedback %}
+
+        <div class="mb-4">
+
+            <div class="content-label">
+                Previous Admin Feedback
+            </div>
+
+            <div class="feedback-box">
+                {{ report.admin_feedback }}
+            </div>
+
+            {% if report.reviewed_by %}
+
+                <div class="review-info">
+
+                    Reviewed by:
+                    {{ report.reviewed_by.get_full_name|default:report.reviewed_by.username }}
+
+                    {% if report.reviewed_at %}
+                        | {{ report.reviewed_at|date:"d M Y, h:i A" }}
+                    {% endif %}
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- REVIEW FORM -->
+
+    {% if report.status == 'SUBMITTED' %}
+
+        <form method="POST"
+              action="{% url 'daily_reports:review_daily_report' report.id %}"
+              id="reportReviewForm">
+
+            {% csrf_token %}
+
+            <div class="mb-4">
+
+                <label for="admin_feedback"
+                       class="form-label fw-semibold">
+
+                    Review Feedback
+
+                </label>
+
+                <textarea
+                    name="admin_feedback"
+                    id="admin_feedback"
+                    class="form-control review-textarea"
+                    rows="4"
+                    placeholder="Write feedback for the employee. Feedback is required for rejection or revision."
+                ></textarea>
+
+                <small class="text-muted">
+                    Feedback is required when rejecting a report
+                    or requesting a revision.
+                </small>
+
+            </div>
+
+
+            <!-- REVIEW ACTIONS -->
+
+            <div class="review-actions">
+
+                <!-- APPROVE -->
+
+                <button type="submit"
+                        name="action"
+                        value="approve"
+                        class="btn btn-success"
+                        onclick="return confirm('Are you sure you want to approve this daily report?');">
+
+                    <i class="bi bi-check-circle me-1"></i>
+                    Approve Report
+
+                </button>
+
+
+                <!-- REQUEST REVISION -->
+
+                <button type="submit"
+                        name="action"
+                        value="revision"
+                        class="btn btn-warning"
+                        onclick="return validateReviewFeedback('revision');">
+
+                    <i class="bi bi-arrow-repeat me-1"></i>
+                    Request Revision
+
+                </button>
+
+
+                <!-- REJECT -->
+
+                <button type="submit"
+                        name="action"
+                        value="reject"
+                        class="btn btn-danger"
+                        onclick="return validateReviewFeedback('reject');">
+
+                    <i class="bi bi-x-circle me-1"></i>
+                    Reject Report
+
+                </button>
+
+            </div>
+
+
+            <div class="review-note">
+                <i class="bi bi-info-circle me-1"></i>
+                Once you review this report, its status will be updated
+                and the employee will be able to see your feedback.
+                Rejected reports and reports requiring revision must
+                include a clear explanation.
+            </div>
+
+        </form>
+
+    {% else %}
+
+        <div class="alert alert-light border mb-0">
+
+            <i class="bi bi-info-circle me-2"></i>
+
+            This report has already been reviewed.
+
+            Current status:
+
+            <strong>{{ report.get_status_display }}</strong>.
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<script>
+    function validateReviewFeedback(action) {
+
+        const feedback = document.getElementById('admin_feedback');
+
+        if (!feedback || !feedback.value.trim()) {
+
+            alert(
+                action === 'reject'
+                    ? 'Please provide a reason before rejecting this report.'
+                    : 'Please provide feedback before requesting a revision.'
+            );
+
+            if (feedback) {
+                feedback.focus();
+            }
+
+            return false;
+        }
+
+        if (action === 'reject') {
+            return confirm('Are you sure you want to reject this report?');
+        }
+
+        return confirm('Are you sure you want to request a revision?');
+    }
+</script>
+
+{% endblock %}

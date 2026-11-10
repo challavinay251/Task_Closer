@@ -1,0 +1,608 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Admin Dashboard{% endblock %} | Task Closer</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+          rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    {% block extra_css %}{% endblock %}
+
+    <style>
+        :root {
+            --primary: #234b78;
+            --primary-dark: #173653;
+            --background: #f4f7fb;
+            --text-dark: #172b45;
+            --text-muted: #718096;
+            --border: #e8edf4;
+            --sidebar-width: 260px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--background);
+            color: var(--text-dark);
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: #fff;
+            border-right: 1px solid var(--border);
+            padding: 28px 18px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 10px 32px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .brand-icon {
+            width: 43px;
+            height: 43px;
+            background: var(--primary);
+            color: #fff;
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+        }
+
+        .brand h5 {
+            font-size: 17px;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .brand small {
+            color: var(--text-muted);
+            font-size: 10px;
+        }
+
+        .nav-section {
+            margin-top: 30px;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #9aa7b8;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            padding: 0 12px;
+            margin-bottom: 13px;
+        }
+
+        .nav-link-custom {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 12px 14px;
+            border-radius: 9px;
+            color: #65758a;
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+            margin-bottom: 5px;
+            transition: 0.2s ease;
+        }
+
+        .nav-link-custom i {
+            font-size: 17px;
+        }
+
+        .nav-link-custom.active {
+            background: #eaf0f8;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .nav-link-custom:hover {
+            background: #f2f5fa;
+            color: var(--primary);
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* MAIN CONTENT */
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+
+        .topbar {
+            height: 76px;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            padding: 0 35px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .topbar h6 {
+            font-size: 15px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-avatar {
+            width: 39px;
+            height: 39px;
+            border-radius: 50%;
+            background: #eaf0f8;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .profile-info strong {
+            display: block;
+            font-size: 12px;
+        }
+
+        .profile-info small {
+            color: var(--text-muted);
+            font-size: 10px;
+        }
+
+        /* CONTENT */
+
+        .dashboard-content {
+            padding: 35px;
+        }
+
+        .welcome-section {
+            margin-bottom: 30px;
+        }
+
+        .welcome-section h2 {
+            font-size: 25px;
+            font-weight: 800;
+            margin-bottom: 9px;
+        }
+
+        .welcome-section p {
+            color: var(--text-muted);
+            font-size: 13px;
+            margin: 0;
+        }
+
+        .role-badge {
+            display: inline-block;
+            background: #eaf0f8;
+            color: var(--primary);
+            padding: 7px 12px;
+            border-radius: 7px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-top: 16px;
+        }
+
+        /* OVERVIEW */
+
+        .section-heading {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 17px;
+        }
+
+        .overview-card {
+            height: 100%;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            padding: 23px;
+            transition: 0.25s ease;
+        }
+
+        .overview-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(20, 45, 75, 0.05);
+        }
+
+        .overview-icon {
+            width: 43px;
+            height: 43px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #eaf0f8;
+            color: var(--primary);
+            border-radius: 11px;
+            font-size: 20px;
+            margin-bottom: 19px;
+        }
+
+        .overview-card h6 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .overview-card p {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        /* QUICK ACCESS */
+
+        .quick-access {
+            margin-top: 32px;
+        }
+
+        .access-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            height: 100%;
+        }
+
+        .access-icon {
+            width: 43px;
+            height: 43px;
+            min-width: 43px;
+            background: #eaf0f8;
+            color: var(--primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+        }
+
+        .access-card h6 {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .access-card p {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        /* FOOTER */
+
+        .dashboard-footer {
+            padding: 25px 35px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 11px;
+        }
+
+        /* MOBILE */
+
+        .mobile-menu-btn {
+            display: none;
+            border: none;
+            background: transparent;
+            font-size: 23px;
+            color: var(--primary);
+        }
+
+        .sidebar-overlay {
+            display: none;
+        }
+
+        @media (max-width: 991px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: 0.3s ease;
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .sidebar-overlay.show {
+                display: block;
+                position: fixed;
+                inset: 0;
+                background: rgba(15, 30, 50, 0.35);
+                z-index: 999;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .topbar {
+                padding: 0 20px;
+                gap: 12px;
+            }
+
+            .dashboard-content {
+                padding: 25px 20px;
+            }
+        }
+
+        @media (max-width: 575px) {
+
+            .topbar {
+                height: 65px;
+            }
+
+            .topbar h6 {
+                font-size: 13px;
+            }
+
+            .profile-info {
+                display: none;
+            }
+
+            .dashboard-content {
+                padding: 24px 15px;
+            }
+
+            .welcome-section h2 {
+                font-size: 21px;
+            }
+
+            .overview-card {
+                padding: 19px;
+            }
+
+            .dashboard-footer {
+                padding: 20px 15px;
+            }
+        }
+
+    </style>
+
+    {% block extra_style %}{% endblock %}
+
+</head>
+
+<body>
+
+<!-- SIDEBAR OVERLAY -->
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar" id="sidebar">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            <i class="bi bi-check2-square"></i>
+        </div>
+
+        <div>
+            <h5>TASK CLOSER</h5>
+            <small>Management Platform</small>
+        </div>
+
+    </div>
+
+
+    <div class="nav-section">
+
+        <div class="nav-label">Main Menu</div>
+
+        <a href="{% url 'dashboard:admin_dashboard' %}"
+           class="nav-link-custom {% block dashboard_active %}{% endblock %}">
+
+            <i class="bi bi-grid"></i>
+            Dashboard
+
+        </a>
+
+        <a href="{% url 'employees:employee_list' %}"
+           class="nav-link-custom {% block employees_active %}{% endblock %}">
+
+            <i class="bi bi-people"></i>
+            Employees
+
+        </a>
+
+        <a href="{% url 'tasks:task_list' %}"
+           class="nav-link-custom {% block tasks_active %}{% endblock %}">
+
+            <i class="bi bi-list-task"></i>
+            Task Management
+
+        </a>
+
+        <a href="{% url 'daily_reports:admin_daily_reports' %}"
+           class="nav-link-custom {% block reports_active %}{% endblock %}">
+            <i class="bi bi-file-earmark-text"></i>
+            Daily Reports
+        </a>
+
+        <a href="{% url 'dashboard:admin_analytics' %}"
+           class="nav-link-custom {% block analytics_active %}{% endblock %}">
+
+            <i class="bi bi-bar-chart"></i>
+            Analytics
+
+        </a>
+
+    </div>
+
+
+    <div class="sidebar-bottom">
+
+        <div class="nav-label">Account</div>
+
+{#        <a href="/admin/" class="nav-link-custom">#}
+{#            <i class="bi bi-gear"></i>#}
+{#            Django Administration#}
+{#        </a>#}
+
+        <form method="POST" action="{% url 'accounts:logout' %}">
+            {% csrf_token %}
+
+            <button type="submit"
+                    class="nav-link-custom w-100 border-0 bg-transparent text-start">
+
+                <i class="bi bi-box-arrow-right"></i>
+                Logout
+
+            </button>
+        </form>
+
+    </div>
+
+</aside>
+
+
+<!-- MAIN CONTENT -->
+
+<main class="main-content">
+
+
+    <!-- TOPBAR -->
+
+    <header class="topbar">
+
+        <div class="d-flex align-items-center gap-3">
+
+            <button class="mobile-menu-btn" id="menuToggle"
+                    aria-label="Open navigation">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <h6>{% block page_heading %}Admin Dashboard{% endblock %}</h6>
+
+        </div>
+
+
+        <div class="topbar-right">
+
+            <div class="admin-profile">
+
+                <div class="profile-avatar">
+                    <i class="bi bi-person"></i>
+                </div>
+
+                <div class="profile-info">
+
+                    <strong>
+                        {{ request.user.get_full_name|default:request.user.username }}
+                    </strong>
+
+                    <small>Administrator</small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- PAGE CONTENT -->
+
+    <section class="dashboard-content">
+
+        {% block content %}
+        {% endblock %}
+
+    </section>
+
+
+    <!-- FOOTER -->
+
+    <footer class="dashboard-footer">
+
+        &copy; {% now "Y" %} Task Closer. All Rights Reserved.
+
+    </footer>
+
+</main>
+
+
+<!-- MOBILE SIDEBAR SCRIPT -->
+
+<script>
+
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+    menuToggle.addEventListener('click', function () {
+
+        sidebar.classList.toggle('show');
+        sidebarOverlay.classList.toggle('show');
+
+    });
+
+    sidebarOverlay.addEventListener('click', function () {
+
+        sidebar.classList.remove('show');
+        sidebarOverlay.classList.remove('show');
+
+    });
+
+</script>
+
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>

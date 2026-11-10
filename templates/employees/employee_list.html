@@ -1,0 +1,764 @@
+
+{% extends "admin/base.html" %}
+
+{% block title %}Employee Management{% endblock %}
+
+{% block page_heading %}Employee Management{% endblock %}
+
+{% block employees_active %}active{% endblock %}
+
+{% block content %}
+
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 28px;
+        flex-wrap: wrap;
+    }
+
+    .page-header h2 {
+        font-size: 25px;
+        font-weight: 800;
+        margin-bottom: 7px;
+    }
+
+    .page-header p {
+        color: var(--text-muted);
+        font-size: 13px;
+        margin: 0;
+    }
+
+    .btn-primary-custom {
+        background: var(--primary);
+        color: #fff;
+        padding: 11px 18px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        border: 1px solid var(--primary);
+        transition: 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-primary-custom:hover {
+        background: var(--primary-dark);
+        color: #fff;
+    }
+
+    .employee-stat-card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 13px;
+        padding: 21px;
+        height: 100%;
+    }
+
+    .employee-stat-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 17px;
+    }
+
+    .employee-stat-icon {
+        width: 43px;
+        height: 43px;
+        border-radius: 11px;
+        background: #eaf0f8;
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+    }
+
+    .employee-stat-card h3 {
+        font-size: 25px;
+        font-weight: 800;
+        margin-bottom: 5px;
+    }
+
+    .employee-stat-card p {
+        color: var(--text-muted);
+        font-size: 12px;
+        margin: 0;
+    }
+
+    .employee-panel {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 13px;
+        margin-top: 30px;
+        overflow: hidden;
+    }
+
+    .employee-panel-header {
+        padding: 22px 24px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .employee-panel-header h5 {
+        font-size: 16px;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .employee-panel-header p {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin: 5px 0 0;
+    }
+
+    .employee-filters {
+        padding: 18px 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .employee-search {
+        position: relative;
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .employee-search i {
+        position: absolute;
+        left: 13px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9aa7b8;
+        font-size: 15px;
+    }
+
+    .employee-search input {
+        width: 100%;
+        height: 42px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 0 13px 0 38px;
+        font-size: 12px;
+        outline: none;
+    }
+
+    .employee-search input:focus,
+    .employee-filter-select:focus {
+        border-color: var(--primary);
+    }
+
+    .employee-filter-select {
+        height: 42px;
+        min-width: 150px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 0 12px;
+        font-size: 12px;
+        color: var(--text-dark);
+        outline: none;
+        background: #fff;
+    }
+
+    .employee-table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .employee-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 850px;
+    }
+
+    .employee-table thead {
+        background: #f8fafd;
+    }
+
+    .employee-table th {
+        padding: 14px 20px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #718096;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .employee-table td {
+        padding: 16px 20px;
+        border-bottom: 1px solid #edf1f6;
+        font-size: 12px;
+        color: #52647a;
+        vertical-align: middle;
+    }
+
+    .employee-table tbody tr:hover {
+        background: #fbfcfe;
+    }
+
+    .employee-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .employee-info {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        min-width: 190px;
+    }
+
+    .employee-avatar {
+        width: 39px;
+        height: 39px;
+        min-width: 39px;
+        border-radius: 50%;
+        background: #eaf0f8;
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 13px;
+        overflow: hidden;
+    }
+
+    .employee-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .employee-info strong {
+        display: block;
+        color: var(--text-dark);
+        font-size: 12px;
+        margin-bottom: 4px;
+    }
+
+    .employee-info small {
+        color: var(--text-muted);
+        font-size: 10px;
+    }
+
+    .employee-id {
+        color: var(--primary);
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .status-active {
+        background: #e8f7ef;
+        color: #198754;
+    }
+
+    .status-inactive {
+        background: #fff1e8;
+        color: #d97706;
+    }
+
+    .status-resigned {
+        background: #fdebec;
+        color: #dc3545;
+    }
+
+    .employee-action {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        color: var(--primary);
+        background: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: 0.2s ease;
+    }
+
+    .employee-action:hover {
+        background: #eaf0f8;
+    }
+
+    .empty-state {
+        padding: 55px 20px;
+        text-align: center;
+    }
+
+    .empty-state-icon {
+        width: 65px;
+        height: 65px;
+        margin: 0 auto 18px;
+        border-radius: 17px;
+        background: #eaf0f8;
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 27px;
+    }
+
+    .empty-state h5 {
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .empty-state p {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-bottom: 20px;
+    }
+
+    .no-results {
+        display: none;
+        padding: 30px;
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 13px;
+    }
+
+    .alert {
+        font-size: 13px;
+    }
+
+    @media (max-width: 575px) {
+        .page-header h2 {
+            font-size: 21px;
+        }
+
+        .page-header .btn-primary-custom {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .employee-panel-header,
+        .employee-filters {
+            padding: 17px;
+        }
+
+        .employee-search {
+            min-width: 100%;
+        }
+
+        .employee-filter-select {
+            flex: 1;
+            min-width: 0;
+        }
+    }
+</style>
+
+
+<!-- PAGE HEADER -->
+
+<div class="page-header">
+
+    <div>
+        <h2>Employee Management</h2>
+        <p>Create, manage, and monitor your team members.</p>
+    </div>
+
+    <a href="{% url 'employees:employee_create' %}"
+       class="btn-primary-custom">
+
+        <i class="bi bi-person-plus"></i>
+        Add New Employee
+
+    </a>
+
+</div>
+
+
+<!-- MESSAGES -->
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show"
+             role="alert">
+
+            {{ message }}
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Close"></button>
+
+        </div>
+    {% endfor %}
+{% endif %}
+
+
+<!-- EMPLOYEE STATISTICS -->
+
+<div class="row g-3">
+
+    <div class="col-12 col-md-4">
+
+        <div class="employee-stat-card">
+
+            <div class="employee-stat-top">
+                <div class="employee-stat-icon">
+                    <i class="bi bi-people"></i>
+                </div>
+            </div>
+
+            <h3>{{ total_employees }}</h3>
+            <p>Total Employees</p>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-12 col-md-4">
+
+        <div class="employee-stat-card">
+
+            <div class="employee-stat-top">
+                <div class="employee-stat-icon">
+                    <i class="bi bi-person-check"></i>
+                </div>
+            </div>
+
+            <h3>{{ active_employees }}</h3>
+            <p>Active Employees</p>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-12 col-md-4">
+
+        <div class="employee-stat-card">
+
+            <div class="employee-stat-top">
+                <div class="employee-stat-icon">
+                    <i class="bi bi-person-dash"></i>
+                </div>
+            </div>
+
+            <h3>{{ inactive_employees }}</h3>
+            <p>Inactive Employees</p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- EMPLOYEE TABLE -->
+
+<div class="employee-panel">
+
+    <div class="employee-panel-header">
+
+        <div>
+            <h5>All Employees</h5>
+            <p>View and manage your registered employees.</p>
+        </div>
+
+        <span class="role-badge mt-0">
+            {{ total_employees }} Employees
+        </span>
+
+    </div>
+
+
+    {% if employees %}
+
+        <!-- SEARCH AND FILTERS -->
+
+        <div class="employee-filters">
+
+            <div class="employee-search">
+
+                <i class="bi bi-search"></i>
+
+                <input type="text"
+                       id="employeeSearch"
+                       placeholder="Search name, ID, email or department...">
+
+            </div>
+
+
+            <select class="employee-filter-select"
+                    id="departmentFilter">
+
+                <option value="">All Departments</option>
+
+                {% for department in employees %}
+                    <option value="{{ department.department|lower }}">
+                        {{ department.department }}
+                    </option>
+                {% endfor %}
+
+            </select>
+
+
+            <select class="employee-filter-select"
+                    id="statusFilter">
+
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="resigned">Resigned</option>
+
+            </select>
+
+        </div>
+
+
+        <!-- TABLE -->
+
+        <div class="employee-table-wrapper">
+
+            <table class="employee-table">
+
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Employee ID</th>
+                        <th>Department</th>
+                        <th>Designation</th>
+                        <th>Manager</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+
+                <tbody id="employeeTableBody">
+
+                    {% for employee in employees %}
+
+                        <tr class="employee-row"
+                            data-department="{{ employee.department|lower }}"
+                            data-status="{% if employee.employment_status == 'RESIGNED' %}resigned{% elif employee.user.is_active and employee.employment_status == 'ACTIVE' %}active{% else %}inactive{% endif %}">
+
+                            <td>
+
+                                <div class="employee-info">
+
+                                    <div class="employee-avatar">
+
+                                        {% if employee.user.profile_picture %}
+                                            <img src="{{ employee.user.profile_picture.url }}"
+                                                 alt="{{ employee.user.get_full_name|default:employee.user.username }}">
+                                        {% else %}
+                                            {{ employee.user.first_name|default:employee.user.username|first|upper }}
+                                        {% endif %}
+
+                                    </div>
+
+                                    <div>
+
+                                        <strong>
+                                            {{ employee.user.get_full_name|default:employee.user.username }}
+                                        </strong>
+
+                                        <small>
+                                            {{ employee.user.email }}
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+
+                            <td>
+                                <span class="employee-id">
+                                    {{ employee.employee_id }}
+                                </span>
+                            </td>
+
+
+                            <td>{{ employee.department }}</td>
+
+
+                            <td>{{ employee.designation }}</td>
+
+
+                            <td>
+                                {% if employee.manager %}
+                                    {{ employee.manager.get_full_name|default:employee.manager.username }}
+                                {% else %}
+                                    <span class="text-muted">Not assigned</span>
+                                {% endif %}
+                            </td>
+
+
+                            <td>
+
+                                {% if employee.employment_status == 'RESIGNED' %}
+
+                                    <span class="status-badge status-resigned">
+                                        Resigned
+                                    </span>
+
+                                {% elif employee.user.is_active and employee.employment_status == 'ACTIVE' %}
+
+                                    <span class="status-badge status-active">
+                                        Active
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="status-badge status-inactive">
+                                        Inactive
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                <a href="{% url 'employees:employee_detail' employee.pk %}"
+                                   class="employee-action"
+                                   title="View Employee">
+
+                                    <i class="bi bi-eye"></i>
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <div class="no-results" id="noResults">
+            <i class="bi bi-search me-1"></i>
+            No employees match your search.
+        </div>
+
+
+    {% else %}
+
+        <!-- EMPTY STATE -->
+
+        <div class="empty-state">
+
+            <div class="empty-state-icon">
+                <i class="bi bi-people"></i>
+            </div>
+
+            <h5>No Employees Added Yet</h5>
+
+            <p>
+                Start building your team by creating your first employee account.
+            </p>
+
+            <a href="{% url 'employees:employee_create' %}"
+               class="btn-primary-custom">
+
+                <i class="bi bi-person-plus"></i>
+                Add Your First Employee
+
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const searchInput = document.getElementById('employeeSearch');
+        const departmentFilter = document.getElementById('departmentFilter');
+        const statusFilter = document.getElementById('statusFilter');
+
+        const employeeRows = document.querySelectorAll('.employee-row');
+        const noResults = document.getElementById('noResults');
+
+        function filterEmployees() {
+
+            if (!searchInput) return;
+
+            const searchValue = searchInput.value.toLowerCase().trim();
+            const selectedDepartment = departmentFilter.value.toLowerCase();
+            const selectedStatus = statusFilter.value.toLowerCase();
+
+            let visibleCount = 0;
+
+            employeeRows.forEach(function (row) {
+
+                const rowText = row.innerText.toLowerCase();
+                const department = row.dataset.department;
+                const status = row.dataset.status;
+
+                const matchesSearch = rowText.includes(searchValue);
+
+                const matchesDepartment =
+                    !selectedDepartment || department === selectedDepartment;
+
+                const matchesStatus =
+                    !selectedStatus || status === selectedStatus;
+
+                const showRow =
+                    matchesSearch && matchesDepartment && matchesStatus;
+
+                row.style.display = showRow ? '' : 'none';
+
+                if (showRow) {
+                    visibleCount++;
+                }
+
+            });
+
+            if (noResults) {
+                noResults.style.display =
+                    visibleCount === 0 ? 'block' : 'none';
+            }
+
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener('input', filterEmployees);
+            departmentFilter.addEventListener('change', filterEmployees);
+            statusFilter.addEventListener('change', filterEmployees);
+        }
+
+    });
+</script>
+
+{% endblock %}

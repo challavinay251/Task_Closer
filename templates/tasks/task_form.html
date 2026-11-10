@@ -1,0 +1,452 @@
+
+{% extends "admin/base.html" %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block page_heading %}{{ page_title }}{% endblock %}
+
+{% block tasks_active %}active{% endblock %}
+
+{% block extra_css %}
+
+<style>
+    .page-header {
+        margin-bottom: 25px;
+    }
+
+    .page-header h2 {
+        font-size: 25px;
+        font-weight: 800;
+        margin-bottom: 7px;
+    }
+
+    .page-header p {
+        color: var(--text-muted);
+        font-size: 13px;
+        margin: 0;
+    }
+
+    .task-form-card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 13px;
+        overflow: hidden;
+        margin-bottom: 22px;
+    }
+
+    .form-card-header {
+        padding: 21px 25px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 13px;
+    }
+
+    .form-section-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        background: #eaf0f8;
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 19px;
+    }
+
+    .form-card-header h5 {
+        font-size: 15px;
+        font-weight: 700;
+        margin: 0 0 4px;
+    }
+
+    .form-card-header p {
+        color: var(--text-muted);
+        font-size: 11px;
+        margin: 0;
+    }
+
+    .form-card-body {
+        padding: 25px;
+    }
+
+    .form-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 8px;
+    }
+
+    .required-mark {
+        color: #dc3545;
+    }
+
+    .form-control,
+    .form-select {
+        min-height: 44px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 12px;
+        color: var(--text-dark);
+        box-shadow: none !important;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: var(--primary);
+    }
+
+    textarea.form-control {
+        min-height: 135px;
+        resize: vertical;
+    }
+
+    .form-text {
+        font-size: 10px;
+        color: var(--text-muted);
+    }
+
+    .field-error {
+        color: #dc3545;
+        font-size: 11px;
+        margin-top: 6px;
+    }
+
+    .form-note {
+        background: #f4f7fb;
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        padding: 14px 16px;
+        color: var(--text-muted);
+        font-size: 11px;
+        line-height: 1.7;
+        margin-bottom: 22px;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        padding: 20px 25px;
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 13px;
+    }
+
+    .btn-primary-custom,
+    .btn-secondary-custom {
+        padding: 11px 20px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: 0.2s ease;
+    }
+
+    .btn-primary-custom {
+        background: var(--primary);
+        color: #fff;
+        border: 1px solid var(--primary);
+    }
+
+    .btn-primary-custom:hover {
+        background: var(--primary-dark);
+        color: #fff;
+    }
+
+    .btn-secondary-custom {
+        background: #fff;
+        color: #64748b;
+        border: 1px solid var(--border);
+    }
+
+    .btn-secondary-custom:hover {
+        background: #f4f7fb;
+        color: var(--text-dark);
+    }
+
+    @media (max-width: 575px) {
+        .page-header h2 {
+            font-size: 21px;
+        }
+
+        .form-card-header,
+        .form-card-body {
+            padding: 18px;
+        }
+
+        .form-actions {
+            padding: 16px;
+        }
+
+        .form-actions a,
+        .form-actions button {
+            flex: 1;
+        }
+    }
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<!-- PAGE HEADER -->
+
+<div class="page-header">
+
+    <h2>{{ page_title }}</h2>
+
+    <p>
+        Assign work to an employee and define the expected completion date.
+    </p>
+
+</div>
+
+
+<!-- FORM NOTE -->
+
+<div class="form-note">
+
+    <i class="bi bi-info-circle me-1"></i>
+
+    Fields marked with <span class="required-mark">*</span> are required.
+    New tasks are created with Pending status and 0% progress.
+
+</div>
+
+
+<!-- FORM ERRORS -->
+
+{% if form.non_field_errors %}
+
+    <div class="alert alert-danger">
+        {% for error in form.non_field_errors %}
+            <div>{{ error }}</div>
+        {% endfor %}
+    </div>
+
+{% endif %}
+
+
+<form method="POST" novalidate>
+
+    {% csrf_token %}
+
+
+    <!-- TASK INFORMATION -->
+
+    <div class="task-form-card">
+
+        <div class="form-card-header">
+
+            <div class="form-section-icon">
+                <i class="bi bi-card-text"></i>
+            </div>
+
+            <div>
+                <h5>Task Information</h5>
+                <p>Provide a clear title and detailed task instructions.</p>
+            </div>
+
+        </div>
+
+
+        <div class="form-card-body">
+
+            <div class="row g-3">
+
+                {% for field in form %}
+
+                    {% if field.name == 'title' or field.name == 'description' %}
+
+                        <div class="col-12">
+
+                            <label for="{{ field.id_for_label }}"
+                                   class="form-label">
+
+                                {{ field.label }}
+
+                                {% if field.field.required %}
+                                    <span class="required-mark">*</span>
+                                {% endif %}
+
+                            </label>
+
+                            {{ field }}
+
+                            {% if field.help_text %}
+                                <div class="form-text">{{ field.help_text }}</div>
+                            {% endif %}
+
+                            {% for error in field.errors %}
+                                <div class="field-error">{{ error }}</div>
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- TASK ASSIGNMENT -->
+
+    <div class="task-form-card">
+
+        <div class="form-card-header">
+
+            <div class="form-section-icon">
+                <i class="bi bi-person-check"></i>
+            </div>
+
+            <div>
+                <h5>Task Assignment</h5>
+                <p>Select the employee responsible for completing this task.</p>
+            </div>
+
+        </div>
+
+
+        <div class="form-card-body">
+
+            <div class="row g-3">
+
+                {% for field in form %}
+
+                    {% if field.name == 'assigned_to' %}
+
+                        <div class="col-12 col-md-8">
+
+                            <label for="{{ field.id_for_label }}"
+                                   class="form-label">
+
+                                {{ field.label }}
+
+                                {% if field.field.required %}
+                                    <span class="required-mark">*</span>
+                                {% endif %}
+
+                            </label>
+
+                            {{ field }}
+
+                            {% if field.help_text %}
+                                <div class="form-text">{{ field.help_text }}</div>
+                            {% endif %}
+
+                            {% for error in field.errors %}
+                                <div class="field-error">{{ error }}</div>
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- PRIORITY AND SCHEDULE -->
+
+    <div class="task-form-card">
+
+        <div class="form-card-header">
+
+            <div class="form-section-icon">
+                <i class="bi bi-calendar-check"></i>
+            </div>
+
+            <div>
+                <h5>Priority & Schedule</h5>
+                <p>Set the importance and expected timeline for this task.</p>
+            </div>
+
+        </div>
+
+
+        <div class="form-card-body">
+
+            <div class="row g-3">
+
+                {% for field in form %}
+
+                    {% if field.name == 'priority' or field.name == 'start_date' or field.name == 'due_date' %}
+
+                        <div class="col-12 col-md-6">
+
+                            <label for="{{ field.id_for_label }}"
+                                   class="form-label">
+
+                                {{ field.label }}
+
+                                {% if field.field.required %}
+                                    <span class="required-mark">*</span>
+                                {% endif %}
+
+                            </label>
+
+                            {{ field }}
+
+                            {% if field.help_text %}
+                                <div class="form-text">{{ field.help_text }}</div>
+                            {% endif %}
+
+                            {% for error in field.errors %}
+                                <div class="field-error">{{ error }}</div>
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- FORM ACTIONS -->
+
+    <div class="form-actions">
+
+        <a href="{% url 'tasks:task_list' %}"
+           class="btn-secondary-custom">
+
+            Cancel
+
+        </a>
+
+
+        <button type="submit" class="btn-primary-custom">
+
+            <i class="bi bi-check2-circle"></i>
+            {{ button_text }}
+
+        </button>
+
+    </div>
+
+</form>
+
+{% endblock %}

@@ -1,0 +1,825 @@
+
+{% extends "employee/base.html" %}
+
+{% block title %}Revise Daily Report{% endblock %}
+{% block page_heading %}Revise Daily Report{% endblock %}
+{% block reports_active %}active{% endblock %}
+{% block history_active %}active{% endblock %}
+
+{% block extra_css %}
+<style>
+    .revision-header {
+        display:flex; justify-content:space-between; align-items:center;
+        flex-wrap:wrap; gap:15px; margin-bottom:25px;
+    }
+    .revision-header h2 {
+        font-size:24px; font-weight:800; color:#172b45; margin-bottom:7px;
+    }
+    .revision-header p { color:#718096; font-size:13px; margin:0; }
+    .revision-card {
+        background:#fff; border:1px solid #e8edf4; border-radius:13px;
+        padding:24px; margin-bottom:22px;
+    }
+    .section-heading {
+        display:flex; align-items:center; gap:10px; font-size:16px;
+        font-weight:750; color:#172b45; margin-bottom:20px;
+    }
+    .section-heading i { color:#234b78; font-size:19px; }
+    .revision-notice {
+        background:#fff8e9; border:1px solid #f4dfb2;
+        border-left:4px solid #d69e2e; border-radius:9px;
+        padding:17px; margin-bottom:22px;
+    }
+    .revision-notice h5 {
+        color:#8a5b08; font-size:14px; font-weight:750; margin-bottom:8px;
+    }
+    .revision-notice p {
+        color:#795b26; font-size:13px; line-height:1.7;
+        white-space:pre-line; margin:0;
+    }
+    .review-meta { color:#8a6b37; font-size:11px; margin-top:9px; }
+    .form-label {
+        color:#34445a; font-size:12px; font-weight:700; margin-bottom:8px;
+    }
+    .form-control, .form-select {
+        border:1px solid #dce5ef; border-radius:8px;
+        font-size:13px; padding:11px 13px;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color:#234b78;
+        box-shadow:0 0 0 3px rgba(35,75,120,.10);
+    }
+    textarea.form-control { resize:vertical; }
+    .form-text, .image-help {
+        font-size:11px; color:#8794a6; margin-top:6px;
+    }
+    .activity-card {
+        border:1px solid #e3eaf2; border-radius:11px;
+        padding:20px; margin-bottom:17px; background:#fff;
+    }
+    .activity-card.deleted { opacity:.45; background:#f7f9fc; }
+    .activity-header {
+        display:flex; justify-content:space-between;
+        align-items:center; gap:12px; margin-bottom:18px;
+    }
+    .activity-header h5 {
+        font-size:14px; font-weight:750; color:#172b45; margin:0;
+    }
+    .remove-activity {
+        background:#fff0f0; border:1px solid #f4d1d1;
+        color:#c43d3d; border-radius:7px;
+        padding:7px 11px; font-size:11px; font-weight:650;
+    }
+    .existing-evidence {
+        display:flex; flex-wrap:wrap; gap:12px; margin:12px 0 16px;
+    }
+    .existing-image {
+        width:115px; border:1px solid #e8edf4;
+        border-radius:9px; overflow:hidden; background:#f7f9fc;
+    }
+    .existing-image img {
+        width:100%; height:90px; object-fit:cover; display:block;
+    }
+    .existing-image p {
+        padding:6px; margin:0; font-size:10px;
+        color:#64748b; overflow-wrap:anywhere;
+    }
+    .existing-video {
+        display:inline-flex; align-items:center; gap:7px;
+        color:#234b78; font-size:12px; text-decoration:none;
+        margin-bottom:12px;
+    }
+    .existing-video:hover { text-decoration:underline; }
+    .entry-error {
+        color:#c0392b; font-size:12px; margin-top:8px;
+    }
+    .add-activity-btn {
+        display:inline-flex; align-items:center; gap:8px;
+        background:#eaf0f8; border:1px dashed #9aafc8;
+        color:#234b78; border-radius:8px;
+        padding:11px 16px; font-size:12px; font-weight:700;
+    }
+    .add-activity-btn:hover { background:#dfe9f5; }
+    .form-actions {
+        display:flex; justify-content:flex-end;
+        flex-wrap:wrap; gap:10px;
+    }
+    .form-actions .btn {
+        border-radius:8px; padding:11px 18px;
+        font-size:12px; font-weight:700;
+    }
+    .back-btn {
+        display:inline-flex; align-items:center; gap:7px;
+        color:#234b78; background:#fff; border:1px solid #dce5ef;
+        padding:10px 15px; border-radius:8px;
+        text-decoration:none; font-size:12px; font-weight:650;
+    }
+    .back-btn:hover { background:#f4f7fb; color:#173653; }
+    .general-errors {
+        background:#fff0f0; border:1px solid #f3cccc;
+        border-radius:9px; padding:14px 18px;
+        color:#b42323; font-size:12px; margin-bottom:20px;
+    }
+    .task-progress-help {
+        font-size:11px; color:#718096; margin-top:6px;
+    }
+    @media(max-width:576px) {
+        .revision-card { padding:17px; }
+        .activity-card { padding:15px; }
+        .revision-header h2 { font-size:21px; }
+        .form-actions { flex-direction:column; }
+        .form-actions .btn { width:100%; }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<!-- PAGE HEADER -->
+<div class="revision-header">
+    <div>
+        <h2>Revise Daily Report</h2>
+        <p>Make the requested corrections and resubmit your daily report.</p>
+    </div>
+
+    <a href="{% url 'daily_reports:employee_report_history' %}"
+       class="back-btn">
+        <i class="bi bi-arrow-left"></i>
+        Back to My Reports
+    </a>
+</div>
+
+
+<!-- ADMIN FEEDBACK -->
+<div class="revision-notice">
+    <h5>
+        <i class="bi bi-exclamation-circle me-2"></i>
+        Admin Requested Changes
+    </h5>
+
+    <p>
+        {% if report.admin_feedback %}
+            {{ report.admin_feedback }}
+        {% else %}
+            Please review and correct your daily report.
+        {% endif %}
+    </p>
+
+    {% if report.reviewed_by and report.reviewed_at %}
+        <div class="review-meta">
+            Requested by
+            {{ report.reviewed_by.get_full_name|default:report.reviewed_by.username }}
+            on {{ report.reviewed_at|date:"d M Y, h:i A" }}
+        </div>
+    {% endif %}
+</div>
+
+
+<!-- GENERAL ERRORS -->
+{% if general_errors %}
+    <div class="general-errors">
+        {% for error in general_errors %}
+            <div>
+                <i class="bi bi-exclamation-circle me-1"></i>
+                {{ error }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+
+{% if report_form.non_field_errors %}
+    <div class="general-errors">
+        {{ report_form.non_field_errors }}
+    </div>
+{% endif %}
+
+
+<form method="POST"
+      enctype="multipart/form-data"
+      id="revisionForm">
+
+    {% csrf_token %}
+
+
+    <!-- DAILY REPORT INFORMATION -->
+    <div class="revision-card">
+
+        <div class="section-heading">
+            <i class="bi bi-calendar-check"></i>
+            Daily Report Information
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label">Report Date</label>
+
+            {{ report_form.report_date }}
+
+            {% for error in report_form.report_date.errors %}
+                <div class="entry-error">{{ error }}</div>
+            {% endfor %}
+
+            <div class="form-text">
+                The original report date cannot be changed.
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label">Daily Work Summary</label>
+
+            {{ report_form.summary }}
+
+            {% for error in report_form.summary.errors %}
+                <div class="entry-error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label">Challenges Faced</label>
+
+            {{ report_form.challenges }}
+
+            {% for error in report_form.challenges.errors %}
+                <div class="entry-error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label">Pending Work</label>
+
+            {{ report_form.pending_work }}
+
+            {% for error in report_form.pending_work.errors %}
+                <div class="entry-error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div>
+            <label class="form-label">Tomorrow's Plan</label>
+
+            {{ report_form.tomorrow_plan }}
+
+            {% for error in report_form.tomorrow_plan.errors %}
+                <div class="entry-error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+
+    <!-- WORK ACTIVITIES -->
+    <div class="revision-card">
+
+        <div class="section-heading">
+            <i class="bi bi-list-check"></i>
+            Work Activities & Evidence
+        </div>
+
+        <p class="text-muted small mb-4">
+            Update your existing activities, add new activities,
+            and upload additional evidence where required.
+            Each activity must have at least one image.
+        </p>
+
+        {{ work_entry_formset.management_form }}
+
+        {% if work_entry_formset.non_form_errors %}
+            <div class="general-errors">
+                {{ work_entry_formset.non_form_errors }}
+            </div>
+        {% endif %}
+
+
+        <div id="activityContainer">
+
+            {% for entry_form in work_entry_formset %}
+
+                <div class="activity-card"
+                     data-entry-index="{{ forloop.counter0 }}">
+
+                    {{ entry_form.id }}
+                    {{ entry_form.DELETE.as_hidden }}
+
+                    {% for error in entry_form.non_field_errors %}
+                        <div class="entry-error mb-3">{{ error }}</div>
+                    {% endfor %}
+
+                    <div class="activity-header">
+                        <h5>
+                            <i class="bi bi-card-checklist me-2"></i>
+                            Work Activity {{ forloop.counter }}
+                        </h5>
+
+                        <button type="button"
+                                class="remove-activity"
+                                onclick="removeActivity(this)">
+                            <i class="bi bi-trash me-1"></i>
+                            Remove
+                        </button>
+                    </div>
+
+
+                    <div class="row g-3">
+
+                        <!-- RELATED TASK -->
+                        <div class="col-12">
+                            <label class="form-label">Related Task</label>
+
+                            {{ entry_form.task }}
+
+                            {% for error in entry_form.task.errors %}
+                                <div class="entry-error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+
+                        <!-- TASK PROGRESS -->
+                        <div class="col-12">
+                            <label class="form-label">Task Progress (%)</label>
+
+                            {{ entry_form.task_progress }}
+
+                            {% for error in entry_form.task_progress.errors %}
+                                <div class="entry-error">{{ error }}</div>
+                            {% endfor %}
+
+                            <div class="task-progress-help">
+                                Enter the current completion percentage
+                                when this activity is linked to an assigned task.
+                            </div>
+                        </div>
+
+
+                        <!-- TITLE -->
+                        <div class="col-12">
+                            <label class="form-label">Activity Title</label>
+
+                            {{ entry_form.title }}
+
+                            {% for error in entry_form.title.errors %}
+                                <div class="entry-error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+
+                        <!-- DESCRIPTION -->
+                        <div class="col-12">
+                            <label class="form-label">Activity Description</label>
+
+                            {{ entry_form.description }}
+
+                            {% for error in entry_form.description.errors %}
+                                <div class="entry-error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+
+                        <!-- HOURS -->
+                        <div class="col-md-6">
+                            <label class="form-label">Hours Spent</label>
+
+                            {{ entry_form.hours_spent }}
+
+                            {% for error in entry_form.hours_spent.errors %}
+                                <div class="entry-error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+
+                        <!-- VIDEO -->
+                        <div class="col-md-6">
+                            <label class="form-label">Upload Video (Optional)</label>
+
+                            {% if entry_form.instance.pk and entry_form.instance.video %}
+                                <div class="mb-2">
+                                    <a href="{{ entry_form.instance.video.url }}"
+                                       target="_blank"
+                                       rel="noopener noreferrer"
+                                       class="existing-video">
+                                        <i class="bi bi-play-circle"></i>
+                                        View Existing Video
+                                    </a>
+                                </div>
+                            {% endif %}
+
+                            {{ entry_form.video }}
+
+                            {% for error in entry_form.video.errors %}
+                                <div class="entry-error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+
+
+                    <!-- EXISTING IMAGES -->
+                    {% if entry_form.instance.pk %}
+                        <div class="mt-4">
+
+                            <label class="form-label">
+                                Existing Uploaded Images
+                            </label>
+
+                            <div class="existing-evidence">
+
+                                {% for image in entry_form.instance.images.all %}
+                                    <div class="existing-image">
+                                        <a href="{{ image.image.url }}"
+                                           target="_blank"
+                                           rel="noopener noreferrer">
+                                            <img src="{{ image.image.url }}"
+                                                 alt="{{ image.caption|default:entry_form.instance.title }}">
+                                        </a>
+
+                                        <p>
+                                            {{ image.caption|default:"Uploaded image" }}
+                                        </p>
+                                    </div>
+                                {% empty %}
+                                    <span class="text-muted small">
+                                        No existing images.
+                                    </span>
+                                {% endfor %}
+
+                            </div>
+                        </div>
+                    {% endif %}
+
+
+                    <!-- NEW IMAGES -->
+                    <div class="mt-3">
+
+                        <label class="form-label">Add New Images</label>
+
+                        <input type="file"
+                               name="images-{{ forloop.counter0 }}"
+                               class="form-control image-input"
+                               accept="image/*"
+                               multiple>
+
+                        <div class="image-help">
+                            You can add multiple images. Existing images
+                            will be preserved.
+                        </div>
+
+                        {% for index, error in entry_image_errors.items %}
+                            {% if index == forloop.parentloop.counter0 %}
+                                <div class="entry-error">{{ error }}</div>
+                            {% endif %}
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        <!-- EMPTY ACTIVITY TEMPLATE -->
+        <template id="emptyActivityTemplate">
+
+            <div class="activity-card"
+                 data-entry-index="__prefix__">
+
+                {{ work_entry_formset.empty_form.id }}
+                {{ work_entry_formset.empty_form.DELETE.as_hidden }}
+
+                <div class="activity-header">
+                    <h5>
+                        <i class="bi bi-card-checklist me-2"></i>
+                        New Work Activity
+                    </h5>
+
+                    <button type="button"
+                            class="remove-activity"
+                            onclick="removeActivity(this)">
+                        <i class="bi bi-trash me-1"></i>
+                        Remove
+                    </button>
+                </div>
+
+
+                <div class="row g-3">
+
+                    <div class="col-12">
+                        <label class="form-label">Related Task</label>
+                        {{ work_entry_formset.empty_form.task }}
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Task Progress (%)</label>
+                        {{ work_entry_formset.empty_form.task_progress }}
+
+                        <div class="task-progress-help">
+                            Enter the current completion percentage
+                            when linked to an assigned task.
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Activity Title</label>
+                        {{ work_entry_formset.empty_form.title }}
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Activity Description</label>
+                        {{ work_entry_formset.empty_form.description }}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Hours Spent</label>
+                        {{ work_entry_formset.empty_form.hours_spent }}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Upload Video (Optional)</label>
+                        {{ work_entry_formset.empty_form.video }}
+                    </div>
+
+                </div>
+
+
+                <div class="mt-3">
+                    <label class="form-label">Upload Images</label>
+
+                    <input type="file"
+                           name="images-__prefix__"
+                           class="form-control image-input"
+                           accept="image/*"
+                           multiple>
+
+                    <div class="image-help">
+                        At least one image is required for this activity.
+                    </div>
+                </div>
+
+            </div>
+
+        </template>
+
+
+        <button type="button"
+                class="add-activity-btn"
+                id="addActivityBtn">
+            <i class="bi bi-plus-circle"></i>
+            Add Another Work Activity
+        </button>
+
+    </div>
+
+
+    <!-- SUBMISSION ACTIONS -->
+    <div class="revision-card">
+
+        <div class="section-heading">
+            <i class="bi bi-send-check"></i>
+            Resubmit Your Report
+        </div>
+
+        <p class="text-muted small mb-4">
+            Review all the corrected information before submitting.
+            Your updated report will return to the Admin for review.
+        </p>
+
+        <div class="form-actions">
+
+            <a href="{% url 'daily_reports:employee_report_history' %}"
+               class="btn btn-light border">
+                Cancel
+            </a>
+
+            <button type="submit"
+                    class="btn btn-primary"
+                    style="background:#234b78;border-color:#234b78;">
+                <i class="bi bi-send me-1"></i>
+                Resubmit Daily Report
+            </button>
+
+        </div>
+
+    </div>
+
+</form>
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const container = document.getElementById('activityContainer');
+    const addButton = document.getElementById('addActivityBtn');
+    const emptyTemplate = document.getElementById('emptyActivityTemplate');
+    const form = document.getElementById('revisionForm');
+
+    const totalForms = form.querySelector(
+        'input[name$="-TOTAL_FORMS"]'
+    );
+
+    const MAX_ACTIVITIES = 20;
+
+
+    function getVisibleActivities() {
+
+        return Array.from(
+            container.querySelectorAll('.activity-card')
+        ).filter(card => {
+
+            const deleteInput = card.querySelector(
+                'input[name$="-DELETE"]'
+            );
+
+            return !deleteInput || !deleteInput.checked;
+
+        });
+
+    }
+
+
+    function updateActivityNumbers() {
+
+        getVisibleActivities().forEach((card, index) => {
+
+            const heading = card.querySelector('.activity-header h5');
+
+            if (heading) {
+                heading.innerHTML =
+                    '<i class="bi bi-card-checklist me-2"></i>' +
+                    'Work Activity ' + (index + 1);
+            }
+
+        });
+
+    }
+
+
+    function updateAddButton() {
+
+        addButton.disabled =
+            getVisibleActivities().length >= MAX_ACTIVITIES;
+
+        addButton.style.opacity =
+            addButton.disabled ? '.5' : '1';
+
+        addButton.style.cursor =
+            addButton.disabled ? 'not-allowed' : 'pointer';
+
+    }
+
+
+    window.removeActivity = function (button) {
+
+        const card = button.closest('.activity-card');
+
+        const deleteInput = card.querySelector(
+            'input[name$="-DELETE"]'
+        );
+
+        if (deleteInput) {
+            deleteInput.checked = true;
+            card.classList.add('deleted');
+            card.style.display = 'none';
+        }
+
+        updateActivityNumbers();
+        updateAddButton();
+
+    };
+
+
+    addButton.addEventListener('click', function () {
+
+        if (getVisibleActivities().length >= MAX_ACTIVITIES) {
+            alert('You can add a maximum of 20 work activities.');
+            return;
+        }
+
+        const formIndex = parseInt(totalForms.value, 10);
+
+        let html = emptyTemplate.innerHTML;
+
+        html = html.replace(/__prefix__/g, formIndex);
+
+        container.insertAdjacentHTML('beforeend', html);
+
+        totalForms.value = formIndex + 1;
+
+        updateActivityNumbers();
+        updateAddButton();
+
+    });
+
+
+    form.addEventListener('submit', function (event) {
+
+        const visibleCards = getVisibleActivities();
+
+        if (visibleCards.length === 0) {
+            event.preventDefault();
+            alert('Please keep at least one work activity.');
+            return;
+        }
+
+        for (const card of visibleCards) {
+
+            const title = card.querySelector(
+                'input[name$="-title"]'
+            );
+
+            const description = card.querySelector(
+                'textarea[name$="-description"]'
+            );
+
+            const task = card.querySelector(
+                'select[name$="-task"]'
+            );
+
+            const imageInput = card.querySelector('.image-input');
+
+            const hasTitle = title && title.value.trim() !== '';
+            const hasDescription =
+                description && description.value.trim() !== '';
+            const hasTask = task && task.value !== '';
+
+            const hasActivity = Boolean(
+                hasTitle || hasDescription || hasTask
+            );
+
+            if (!hasActivity) {
+
+                event.preventDefault();
+
+                alert(
+                    'Please complete every work activity or remove the blank activity.'
+                );
+
+                card.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+
+                return;
+            }
+
+
+            const hasExistingImages =
+                card.querySelector('.existing-image') !== null;
+
+            const hasNewImages =
+                imageInput && imageInput.files.length > 0;
+
+            if (!hasExistingImages && !hasNewImages) {
+
+                event.preventDefault();
+
+                alert(
+                    'Please upload at least one image for every work activity.'
+                );
+
+                card.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+
+                return;
+            }
+
+
+            if (hasTask) {
+
+                const progress = card.querySelector(
+                    'input[name$="-task_progress"]'
+                );
+
+                if (!progress || progress.value.trim() === '') {
+
+                    event.preventDefault();
+
+                    alert(
+                        'Please enter task progress for the selected task.'
+                    );
+
+                    if (progress) {
+                        progress.focus();
+                    }
+
+                    return;
+                }
+
+            }
+
+        }
+
+    });
+
+
+    updateActivityNumbers();
+    updateAddButton();
+
+});
+</script>
+{% endblock %}

@@ -1,0 +1,1296 @@
+
+{% extends "employee/base.html" %}
+
+{% block title %}Submit Daily Report | Task Closer{% endblock %}
+
+{% block reports_active %}active{% endblock %}
+
+
+{% block extra_css %}
+<style>
+
+    .report-header {
+        margin-bottom: 28px;
+    }
+
+    .report-header h2 {
+        font-weight: 750;
+        color: #172554;
+        margin-bottom: 7px;
+    }
+
+    .report-header p {
+        color: #64748b;
+        margin-bottom: 0;
+    }
+
+    .report-card {
+        background: #fff;
+        border: 1px solid #e5eaf2;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 15px rgba(15, 23, 42, 0.035);
+    }
+
+    .section-heading {
+        font-size: 17px;
+        font-weight: 700;
+        color: #172554;
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #334155;
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+    .form-control,
+    .form-select {
+        border: 1px solid #dbe2ec;
+        border-radius: 9px;
+        padding: 11px 13px;
+        font-size: 14px;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #315efb;
+        box-shadow: 0 0 0 3px rgba(49, 94, 251, 0.10);
+    }
+
+    .work-entry {
+        border: 1px solid #e2e8f0;
+        border-radius: 13px;
+        padding: 20px;
+        margin-bottom: 18px;
+        background: #fbfcff;
+    }
+
+    .entry-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .entry-heading h6 {
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0;
+    }
+
+    .upload-note {
+        color: #64748b;
+        font-size: 12px;
+        margin-top: 6px;
+    }
+
+    .btn-add-entry {
+        border: 1px dashed #315efb;
+        background: #f5f7ff;
+        color: #315efb;
+        border-radius: 9px;
+        padding: 11px 16px;
+        font-weight: 600;
+    }
+
+    .btn-add-entry:hover {
+        background: #eaf0ff;
+    }
+
+    .btn-submit-report {
+        background: #1e3a8a;
+        color: #fff;
+        border: none;
+        border-radius: 9px;
+        padding: 12px 25px;
+        font-weight: 650;
+    }
+
+    .btn-submit-report:hover {
+        background: #172554;
+        color: #fff;
+    }
+
+    .btn-remove-entry {
+        border: 1px solid #fecaca;
+        color: #dc2626;
+        background: #fff;
+        border-radius: 7px;
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+
+    .btn-remove-entry:hover {
+        background: #fef2f2;
+    }
+
+    .required-star {
+        color: #dc2626;
+    }
+
+    .error-text {
+        color: #dc2626;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    .entry-error {
+        background: #fff1f2;
+        border: 1px solid #fecdd3;
+        color: #be123c;
+        padding: 10px 13px;
+        border-radius: 8px;
+        font-size: 13px;
+        margin-bottom: 16px;
+    }
+
+    .work-entry.is-deleted {
+        display: none;
+    }
+
+    /* TASK PROGRESS */
+
+    .task-progress-input {
+        position: relative;
+    }
+
+    .task-progress-input .form-control {
+        padding-right: 45px;
+    }
+
+    .progress-suffix {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #64748b;
+        font-size: 13px;
+        font-weight: 700;
+        pointer-events: none;
+    }
+
+    .progress-preview {
+        margin-top: 9px;
+    }
+
+    .progress-preview-heading {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        font-weight: 600;
+        color: #64748b;
+        margin-bottom: 6px;
+    }
+
+    .progress-preview .progress {
+        height: 7px;
+        background: #e9eef5;
+        border-radius: 10px;
+    }
+
+    .progress-preview .progress-bar {
+        background: #315efb;
+        border-radius: 10px;
+        transition: width .2s ease;
+    }
+
+    .progress-help {
+        font-size: 11px;
+        color: #64748b;
+        margin-top: 7px;
+    }
+
+    .task-progress-wrapper {
+        display: none;
+    }
+
+    .task-progress-wrapper.show {
+        display: block;
+    }
+
+    @media (max-width: 576px) {
+
+        .report-card {
+            padding: 17px;
+        }
+
+        .entry-heading {
+            align-items: flex-start;
+        }
+
+        .btn-submit-report {
+            width: 100%;
+        }
+    }
+
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid px-0">
+
+    <!-- PAGE HEADER -->
+
+    <div class="report-header">
+
+        <h2>Submit Daily Report</h2>
+
+        <p>
+            Record your completed work, upload evidence, and share
+            your daily progress.
+        </p>
+
+    </div>
+
+
+    <!-- GENERAL MESSAGES -->
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+
+                {{ message }}
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert">
+                </button>
+
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+    {% if general_errors %}
+
+        <div class="alert alert-danger">
+
+            {% for error in general_errors %}
+
+                <div>{{ error }}</div>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+
+    <form method="POST"
+          enctype="multipart/form-data"
+          id="dailyReportForm">
+
+        {% csrf_token %}
+
+
+        <!-- DAILY REPORT INFORMATION -->
+
+        <div class="report-card">
+
+            <h5 class="section-heading">
+
+                <i class="bi bi-calendar-check me-2"></i>
+                Daily Report Information
+
+            </h5>
+
+
+            <div class="mb-4">
+
+                <label class="form-label">
+                    Report Date <span class="required-star">*</span>
+                </label>
+
+                {{ report_form.report_date }}
+
+                {% for error in report_form.report_date.errors %}
+
+                    <div class="error-text">{{ error }}</div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <div class="mb-4">
+
+                <label class="form-label">
+                    Daily Work Summary <span class="required-star">*</span>
+                </label>
+
+                {{ report_form.summary }}
+
+                {% for error in report_form.summary.errors %}
+
+                    <div class="error-text">{{ error }}</div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <div class="mb-4">
+
+                <label class="form-label">
+                    Challenges Faced
+                </label>
+
+                {{ report_form.challenges }}
+
+                {% for error in report_form.challenges.errors %}
+
+                    <div class="error-text">{{ error }}</div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <div class="mb-4">
+
+                <label class="form-label">
+                    Pending Work
+                </label>
+
+                {{ report_form.pending_work }}
+
+                {% for error in report_form.pending_work.errors %}
+
+                    <div class="error-text">{{ error }}</div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <div>
+
+                <label class="form-label">
+                    Tomorrow's Plan
+                </label>
+
+                {{ report_form.tomorrow_plan }}
+
+                {% for error in report_form.tomorrow_plan.errors %}
+
+                    <div class="error-text">{{ error }}</div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+
+        <!-- WORK ACTIVITIES -->
+
+        <div class="report-card">
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+
+                <div>
+
+                    <h5 class="section-heading mb-1">
+
+                        <i class="bi bi-list-check me-2"></i>
+                        Work Activities
+
+                    </h5>
+
+                    <small class="text-secondary">
+
+                        Add each activity completed today with supporting images.
+
+                    </small>
+
+                </div>
+
+                <span class="badge text-bg-primary">
+                    Maximum 20 entries
+                </span>
+
+            </div>
+
+
+            <!-- DJANGO FORMSET MANAGEMENT -->
+
+            {{ work_entry_formset.management_form }}
+
+
+            <!-- IMAGE ERRORS -->
+
+            {% if entry_image_errors %}
+
+                <div class="entry-error">
+
+                    <strong>
+
+                        <i class="bi bi-exclamation-circle me-1"></i>
+                        Image upload errors
+
+                    </strong>
+
+                    {% for index, error in entry_image_errors.items %}
+
+                        <div class="mt-2">
+
+                            Work Activity {{ index|add:1 }}: {{ error }}
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- FORMSET ERRORS -->
+
+            {% if work_entry_formset.non_form_errors %}
+
+                <div class="alert alert-danger">
+
+                    {{ work_entry_formset.non_form_errors }}
+
+                </div>
+
+            {% endif %}
+
+
+            <div id="workEntries">
+
+                {% for entry_form in work_entry_formset %}
+
+                    <div class="work-entry" data-entry>
+
+                        <div class="entry-heading">
+
+                            <h6>
+
+                                <i class="bi bi-clipboard-check me-2"></i>
+                                Work Activity {{ forloop.counter }}
+
+                            </h6>
+
+                            <button type="button"
+                                    class="btn-remove-entry"
+                                    data-remove>
+
+                                <i class="bi bi-trash me-1"></i>
+                                Remove
+
+                            </button>
+
+                        </div>
+
+
+                        {{ entry_form.id }}
+                        {{ entry_form.DELETE.as_hidden }}
+
+
+                        {% for error in entry_form.non_field_errors %}
+
+                            <div class="error-text mb-3">
+                                {{ error }}
+                            </div>
+
+                        {% endfor %}
+
+
+                        <div class="row g-3">
+
+
+                            <!-- RELATED TASK -->
+
+                            <div class="col-md-6">
+
+                                <label class="form-label">
+                                    Related Task
+                                </label>
+
+                                {{ entry_form.task }}
+
+                                {% for error in entry_form.task.errors %}
+
+                                    <div class="error-text">{{ error }}</div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- ACTIVITY TITLE -->
+
+                            <div class="col-md-6">
+
+                                <label class="form-label">
+
+                                    Activity Title
+                                    <span class="required-star">*</span>
+
+                                </label>
+
+                                {{ entry_form.title }}
+
+                                {% for error in entry_form.title.errors %}
+
+                                    <div class="error-text">{{ error }}</div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- DESCRIPTION -->
+
+                            <div class="col-12">
+
+                                <label class="form-label">
+
+                                    Work Description
+                                    <span class="required-star">*</span>
+
+                                </label>
+
+                                {{ entry_form.description }}
+
+                                {% for error in entry_form.description.errors %}
+
+                                    <div class="error-text">{{ error }}</div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- HOURS -->
+
+                            <div class="col-md-6">
+
+                                <label class="form-label">
+                                    Hours Spent
+                                </label>
+
+                                {{ entry_form.hours_spent }}
+
+                                {% for error in entry_form.hours_spent.errors %}
+
+                                    <div class="error-text">{{ error }}</div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- TASK PROGRESS -->
+
+                            <div class="col-md-6 task-progress-wrapper">
+
+                                <label class="form-label">
+
+                                    Task Progress
+                                    <span class="required-star">*</span>
+
+                                </label>
+
+                                <div class="task-progress-input">
+
+                                    {{ entry_form.task_progress }}
+
+                                    <span class="progress-suffix">%</span>
+
+                                </div>
+
+                                {% for error in entry_form.task_progress.errors %}
+
+                                    <div class="error-text">{{ error }}</div>
+
+                                {% endfor %}
+
+                                <div class="progress-preview">
+
+                                    <div class="progress-preview-heading">
+
+                                        <span>Completion</span>
+
+                                        <span data-progress-label>0%</span>
+
+                                    </div>
+
+                                    <div class="progress">
+
+                                        <div class="progress-bar"
+                                             data-progress-bar
+                                             style="width: 0%;">
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="progress-help">
+                                    Enter the current overall completion percentage for this task.
+                                </div>
+
+                            </div>
+
+
+                            <!-- VIDEO -->
+
+                            <div class="col-md-6">
+
+                                <label class="form-label">
+                                    Video Evidence (Optional)
+                                </label>
+
+                                {{ entry_form.video }}
+
+                                {% for error in entry_form.video.errors %}
+
+                                    <div class="error-text">{{ error }}</div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- IMAGES -->
+
+                            <div class="col-12">
+
+                                <label class="form-label">
+
+                                    Work Images
+                                    <span class="required-star">*</span>
+
+                                </label>
+
+                                <input type="file"
+                                       name="images-{{ forloop.counter0 }}"
+                                       class="form-control"
+                                       accept="image/*"
+                                       multiple
+                                       data-image-input>
+
+                                <div class="upload-note">
+
+                                    Upload at least one image for this activity.
+                                    You can select multiple images.
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <!-- ADD ACTIVITY -->
+
+            <button type="button"
+                    class="btn-add-entry"
+                    id="addEntry">
+
+                <i class="bi bi-plus-circle me-2"></i>
+                Add Another Work Activity
+
+            </button>
+
+        </div>
+
+
+        <!-- SUBMIT BUTTONS -->
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+
+            <a href="{% url 'dashboard:employee_dashboard' %}"
+               class="btn btn-light border px-4 py-2">
+
+                Cancel
+
+            </a>
+
+
+            <button type="submit"
+                    class="btn-submit-report"
+                    id="submitReport">
+
+                <i class="bi bi-send me-2"></i>
+                Submit Daily Report
+
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<!-- EMPTY FORM TEMPLATE -->
+
+<template id="emptyEntryTemplate">
+
+    <div class="work-entry" data-entry>
+
+        <div class="entry-heading">
+
+            <h6>
+
+                <i class="bi bi-clipboard-check me-2"></i>
+                New Work Activity
+
+            </h6>
+
+            <button type="button"
+                    class="btn-remove-entry"
+                    data-remove>
+
+                <i class="bi bi-trash me-1"></i>
+                Remove
+
+            </button>
+
+        </div>
+
+
+        {{ work_entry_formset.empty_form.id }}
+        {{ work_entry_formset.empty_form.DELETE.as_hidden }}
+
+
+        <div class="row g-3">
+
+
+            <!-- RELATED TASK -->
+
+            <div class="col-md-6">
+
+                <label class="form-label">
+                    Related Task
+                </label>
+
+                {{ work_entry_formset.empty_form.task }}
+
+            </div>
+
+
+            <!-- ACTIVITY TITLE -->
+
+            <div class="col-md-6">
+
+                <label class="form-label">
+
+                    Activity Title
+                    <span class="required-star">*</span>
+
+                </label>
+
+                {{ work_entry_formset.empty_form.title }}
+
+            </div>
+
+
+            <!-- DESCRIPTION -->
+
+            <div class="col-12">
+
+                <label class="form-label">
+
+                    Work Description
+                    <span class="required-star">*</span>
+
+                </label>
+
+                {{ work_entry_formset.empty_form.description }}
+
+            </div>
+
+
+            <!-- HOURS -->
+
+            <div class="col-md-6">
+
+                <label class="form-label">
+                    Hours Spent
+                </label>
+
+                {{ work_entry_formset.empty_form.hours_spent }}
+
+            </div>
+
+
+            <!-- TASK PROGRESS -->
+
+            <div class="col-md-6 task-progress-wrapper">
+
+                <label class="form-label">
+
+                    Task Progress
+                    <span class="required-star">*</span>
+
+                </label>
+
+                <div class="task-progress-input">
+
+                    {{ work_entry_formset.empty_form.task_progress }}
+
+                    <span class="progress-suffix">%</span>
+
+                </div>
+
+                <div class="progress-preview">
+
+                    <div class="progress-preview-heading">
+
+                        <span>Completion</span>
+
+                        <span data-progress-label>0%</span>
+
+                    </div>
+
+                    <div class="progress">
+
+                        <div class="progress-bar"
+                             data-progress-bar
+                             style="width: 0%;">
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="progress-help">
+                    Enter the current overall completion percentage for this task.
+                </div>
+
+            </div>
+
+
+            <!-- VIDEO -->
+
+            <div class="col-md-6">
+
+                <label class="form-label">
+                    Video Evidence (Optional)
+                </label>
+
+                {{ work_entry_formset.empty_form.video }}
+
+            </div>
+
+
+            <!-- IMAGES -->
+
+            <div class="col-12">
+
+                <label class="form-label">
+
+                    Work Images
+                    <span class="required-star">*</span>
+
+                </label>
+
+                <input type="file"
+                       name="images-__prefix__"
+                       class="form-control"
+                       accept="image/*"
+                       multiple
+                       data-image-input>
+
+                <div class="upload-note">
+
+                    Upload at least one image for this activity.
+                    You can select multiple images.
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</template>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    const entriesContainer = document.getElementById('workEntries');
+    const addButton = document.getElementById('addEntry');
+    const form = document.getElementById('dailyReportForm');
+    const template = document.getElementById('emptyEntryTemplate');
+
+    const totalForms = form.querySelector(
+        'input[name$="-TOTAL_FORMS"]'
+    );
+
+    const maxEntries = 20;
+
+
+    // =====================================
+    // TASK PROGRESS DISPLAY
+    // =====================================
+
+    function updateProgressDisplay(entry) {
+
+        const taskSelect = entry.querySelector(
+            'select[name$="-task"]'
+        );
+
+        const progressWrapper = entry.querySelector(
+            '.task-progress-wrapper'
+        );
+
+        const progressInput = entry.querySelector(
+            'input[name$="-task_progress"]'
+        );
+
+        const progressLabel = entry.querySelector(
+            '[data-progress-label]'
+        );
+
+        const progressBar = entry.querySelector(
+            '[data-progress-bar]'
+        );
+
+        if (!taskSelect || !progressWrapper || !progressInput) {
+            return;
+        }
+
+        const taskSelected = taskSelect.value !== '';
+
+        progressWrapper.classList.toggle(
+            'show',
+            taskSelected
+        );
+
+        if (!taskSelected) {
+            progressInput.value = '';
+            progressInput.classList.remove('is-invalid');
+
+            if (progressLabel) {
+                progressLabel.textContent = '0%';
+            }
+
+            if (progressBar) {
+                progressBar.style.width = '0%';
+            }
+
+            return;
+        }
+
+        let progress = parseInt(progressInput.value, 10);
+
+        if (isNaN(progress)) {
+            progress = 0;
+        }
+
+        progress = Math.min(100, Math.max(0, progress));
+
+        if (progressLabel) {
+            progressLabel.textContent = progress + '%';
+        }
+
+        if (progressBar) {
+            progressBar.style.width = progress + '%';
+        }
+    }
+
+
+    function initializeProgressFields() {
+
+        const entries = entriesContainer.querySelectorAll('[data-entry]');
+
+        entries.forEach(function (entry) {
+
+            updateProgressDisplay(entry);
+
+        });
+
+    }
+
+
+    // =====================================
+    // ADD NEW WORK ACTIVITY
+    // =====================================
+
+    addButton.addEventListener('click', function () {
+
+        const currentCount = parseInt(totalForms.value, 10);
+
+        if (currentCount >= maxEntries) {
+
+            alert('You can add a maximum of 20 work activities.');
+
+            return;
+        }
+
+        let newEntryHTML = template.innerHTML;
+
+        newEntryHTML = newEntryHTML.replace(
+            /__prefix__/g,
+            currentCount
+        );
+
+        const temporaryContainer = document.createElement('div');
+
+        temporaryContainer.innerHTML = newEntryHTML.trim();
+
+        const newEntry = temporaryContainer.firstElementChild;
+
+        entriesContainer.appendChild(newEntry);
+
+        totalForms.value = currentCount + 1;
+
+        updateActivityNumbers();
+
+        updateProgressDisplay(newEntry);
+
+    });
+
+
+    // =====================================
+    // REMOVE WORK ACTIVITY
+    // =====================================
+
+    entriesContainer.addEventListener('click', function (event) {
+
+        const removeButton = event.target.closest('[data-remove]');
+
+        if (!removeButton) {
+            return;
+        }
+
+        const entry = removeButton.closest('[data-entry]');
+
+        if (!entry) {
+            return;
+        }
+
+        const deleteField = entry.querySelector(
+            'input[name$="-DELETE"]'
+        );
+
+        if (deleteField) {
+
+            deleteField.value = 'on';
+
+            entry.classList.add('is-deleted');
+
+            updateActivityNumbers();
+
+        }
+
+    });
+
+
+    // =====================================
+    // UPDATE ACTIVITY NUMBERS
+    // =====================================
+
+    function updateActivityNumbers() {
+
+        const entries = entriesContainer.querySelectorAll('[data-entry]');
+
+        let visibleCount = 0;
+
+        entries.forEach(function (entry) {
+
+            if (entry.classList.contains('is-deleted')) {
+                return;
+            }
+
+            visibleCount++;
+
+            const heading = entry.querySelector('.entry-heading h6');
+
+            if (heading) {
+
+                heading.innerHTML =
+                    '<i class="bi bi-clipboard-check me-2"></i>' +
+                    'Work Activity ' + visibleCount;
+
+            }
+
+        });
+
+    }
+
+
+    // =====================================
+    // PROGRESS INPUT EVENTS
+    // =====================================
+
+    entriesContainer.addEventListener('change', function (event) {
+
+        if (
+            event.target.matches('select[name$="-task"]') ||
+            event.target.matches('input[name$="-task_progress"]')
+        ) {
+
+            const entry = event.target.closest('[data-entry]');
+
+            if (entry) {
+                updateProgressDisplay(entry);
+            }
+
+        }
+
+    });
+
+
+    entriesContainer.addEventListener('input', function (event) {
+
+        if (event.target.matches('input[name$="-task_progress"]')) {
+
+            const entry = event.target.closest('[data-entry]');
+
+            if (entry) {
+                updateProgressDisplay(entry);
+            }
+
+        }
+
+    });
+
+
+    // =====================================
+    // CLIENT-SIDE FORM VALIDATION
+    // =====================================
+
+    form.addEventListener('submit', function (event) {
+
+        const entries = entriesContainer.querySelectorAll('[data-entry]');
+
+        let valid = true;
+
+        entries.forEach(function (entry) {
+
+            if (entry.classList.contains('is-deleted')) {
+                return;
+            }
+
+            const title = entry.querySelector(
+                'input[name$="-title"]'
+            );
+
+            const description = entry.querySelector(
+                'textarea[name$="-description"]'
+            );
+
+            const task = entry.querySelector(
+                'select[name$="-task"]'
+            );
+
+            const progressInput = entry.querySelector(
+                'input[name$="-task_progress"]'
+            );
+
+            const hasActivity =
+                (title && title.value.trim() !== '') ||
+                (description && description.value.trim() !== '') ||
+                (task && task.value !== '');
+
+            // Ignore untouched empty forms.
+            if (!hasActivity) {
+                return;
+            }
+
+            // Require progress when a task is selected.
+            if (task && task.value !== '') {
+
+                const progressValue = progressInput
+                    ? progressInput.value.trim()
+                    : '';
+
+                const progress = Number(progressValue);
+
+                if (
+                    progressValue === '' ||
+                    !Number.isInteger(progress) ||
+                    progress < 0 ||
+                    progress > 100
+                ) {
+
+                    valid = false;
+
+                    if (progressInput) {
+                        progressInput.classList.add('is-invalid');
+                    }
+
+                } else if (progressInput) {
+
+                    progressInput.classList.remove('is-invalid');
+
+                }
+
+            }
+
+
+            // Require at least one image.
+            const imageInput = entry.querySelector('[data-image-input]');
+
+            if (imageInput && imageInput.files.length === 0) {
+
+                valid = false;
+
+                imageInput.classList.add('is-invalid');
+
+            } else if (imageInput) {
+
+                imageInput.classList.remove('is-invalid');
+
+            }
+
+        });
+
+
+        if (!valid) {
+
+            event.preventDefault();
+
+            alert(
+                'Please enter valid task progress (0-100%) for every selected task and upload at least one image for every work activity.'
+            );
+
+        }
+
+    });
+
+
+    // =====================================
+    // INITIALIZE
+    // =====================================
+
+    updateActivityNumbers();
+
+    initializeProgressFields();
+
+});
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,530 @@
+
+{% extends "admin/base.html" %}
+
+{% block title %}Task Details{% endblock %}
+{% block page_heading %}Task Details{% endblock %}
+{% block tasks_active %}active{% endblock %}
+
+{% block extra_css %}
+<style>
+    .task-detail-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-bottom: 26px;
+    }
+
+    .task-detail-header h2 {
+        font-size: 25px;
+        font-weight: 800;
+        margin-bottom: 7px;
+    }
+
+    .task-detail-header p {
+        font-size: 13px;
+        color: var(--text-muted);
+        margin: 0;
+    }
+
+    .detail-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 11px 18px;
+        background: #fff;
+        color: var(--primary);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .detail-btn:hover {
+        background: #eaf0f8;
+        color: var(--primary);
+    }
+
+    .detail-card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 13px;
+        overflow: hidden;
+        margin-bottom: 22px;
+    }
+
+    .detail-card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 21px 24px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .detail-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        background: #eaf0f8;
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 19px;
+    }
+
+    .detail-card-header h5 {
+        font-size: 15px;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .detail-card-body {
+        padding: 25px;
+    }
+
+    .task-main-title {
+        font-size: 21px;
+        font-weight: 800;
+        margin-bottom: 14px;
+        overflow-wrap: anywhere;
+    }
+
+    .task-description {
+        color: #52647a;
+        font-size: 13px;
+        line-height: 1.9;
+        overflow-wrap: anywhere;
+    }
+
+    .detail-label {
+        display: block;
+        color: var(--text-muted);
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .6px;
+        margin-bottom: 8px;
+    }
+
+    .detail-value {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-dark);
+        overflow-wrap: anywhere;
+    }
+
+    .detail-field {
+        margin-bottom: 23px;
+    }
+
+    .detail-field:last-child {
+        margin-bottom: 0;
+    }
+
+    .priority-badge,
+    .status-badge {
+        display: inline-block;
+        padding: 7px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .priority-low {
+        background: #edf3fa;
+        color: #55708f;
+    }
+
+    .priority-medium {
+        background: #eaf0f8;
+        color: #234b78;
+    }
+
+    .priority-high {
+        background: #fff1df;
+        color: #c77a12;
+    }
+
+    .priority-urgent {
+        background: #fdebec;
+        color: #dc3545;
+    }
+
+    .status-pending {
+        background: #fff5df;
+        color: #b7791f;
+    }
+
+    .status-in-progress {
+        background: #eaf0ff;
+        color: #4169b2;
+    }
+
+    .status-completed {
+        background: #e8f7ef;
+        color: #198754;
+    }
+
+    .status-on-hold {
+        background: #f0eafa;
+        color: #7952a0;
+    }
+
+    .task-progress-value {
+        font-size: 27px;
+        font-weight: 800;
+        color: var(--primary);
+        margin-bottom: 13px;
+    }
+
+    .task-progress-track {
+        height: 10px;
+        border-radius: 10px;
+        background: #edf1f6;
+        overflow: hidden;
+    }
+
+    .task-progress-fill {
+        height: 100%;
+        border-radius: 10px;
+        background: var(--primary);
+        transition: width .3s ease;
+    }
+
+    .progress-note {
+        margin-top: 12px;
+        color: var(--text-muted);
+        font-size: 11px;
+    }
+
+    .employee-profile {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+    }
+
+    .employee-avatar {
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+        border-radius: 50%;
+        background: #eaf0f8;
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+        font-weight: 700;
+        overflow: hidden;
+    }
+
+    .employee-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .employee-profile strong {
+        display: block;
+        font-size: 13px;
+        color: var(--text-dark);
+    }
+
+    .employee-profile small {
+        display: block;
+        margin-top: 5px;
+        color: var(--text-muted);
+        font-size: 11px;
+    }
+
+    @media (max-width: 575px) {
+        .task-detail-header h2 {
+            font-size: 21px;
+        }
+
+        .detail-card-header,
+        .detail-card-body {
+            padding: 18px;
+        }
+
+        .task-main-title {
+            font-size: 19px;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<!-- PAGE HEADER -->
+
+<div class="task-detail-header">
+
+    <div>
+        <h2>Task Details</h2>
+        <p>Review task information, assignment, and progress.</p>
+    </div>
+
+    <a href="{% url 'tasks:task_list' %}" class="detail-btn">
+        <i class="bi bi-arrow-left"></i>
+        Back to Tasks
+    </a>
+
+</div>
+
+
+<!-- MESSAGES -->
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show"
+             role="alert">
+
+            {{ message }}
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Close"></button>
+
+        </div>
+    {% endfor %}
+{% endif %}
+
+
+<!-- TASK INFORMATION -->
+
+<div class="detail-card">
+
+    <div class="detail-card-header">
+        <div class="detail-icon">
+            <i class="bi bi-list-check"></i>
+        </div>
+        <h5>Task Information</h5>
+    </div>
+
+    <div class="detail-card-body">
+
+        <h3 class="task-main-title">{{ task.title }}</h3>
+
+        <div class="task-description">
+            {{ task.description|linebreaksbr }}
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="row g-3">
+
+    <!-- ASSIGNMENT DETAILS -->
+
+    <div class="col-12 col-lg-6">
+
+        <div class="detail-card">
+
+            <div class="detail-card-header">
+                <div class="detail-icon">
+                    <i class="bi bi-person-check"></i>
+                </div>
+                <h5>Assignment Information</h5>
+            </div>
+
+            <div class="detail-card-body">
+
+                <div class="detail-field">
+                    <span class="detail-label">Assigned Employee</span>
+
+                    <div class="employee-profile">
+
+                        <div class="employee-avatar">
+
+                            {% if task.assigned_to.user.profile_picture %}
+                                <img src="{{ task.assigned_to.user.profile_picture.url }}"
+                                     alt="Employee profile picture">
+                            {% else %}
+                                <i class="bi bi-person"></i>
+                            {% endif %}
+
+                        </div>
+
+                        <div>
+                            <strong>
+                                {{ task.assigned_to.user.get_full_name|default:task.assigned_to.user.username }}
+                            </strong>
+                            <small>{{ task.assigned_to.employee_id }}</small>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="detail-field">
+                    <span class="detail-label">Assigned By</span>
+                    <div class="detail-value">
+                        {% if task.assigned_by %}
+                            {{ task.assigned_by.get_full_name|default:task.assigned_by.username }}
+                        {% else %}
+                            Not available
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- PRIORITY AND STATUS -->
+
+    <div class="col-12 col-lg-6">
+
+        <div class="detail-card">
+
+            <div class="detail-card-header">
+                <div class="detail-icon">
+                    <i class="bi bi-flag"></i>
+                </div>
+                <h5>Priority & Status</h5>
+            </div>
+
+            <div class="detail-card-body">
+
+                <div class="row">
+
+                    <div class="col-6 detail-field">
+                        <span class="detail-label">Priority</span>
+
+                        <span class="priority-badge priority-{{ task.priority|lower }}">
+                            {{ task.get_priority_display }}
+                        </span>
+                    </div>
+
+                    <div class="col-6 detail-field">
+                        <span class="detail-label">Current Status</span>
+
+                        {% if task.status == 'PENDING' %}
+                            <span class="status-badge status-pending">Pending</span>
+                        {% elif task.status == 'IN_PROGRESS' %}
+                            <span class="status-badge status-in-progress">In Progress</span>
+                        {% elif task.status == 'COMPLETED' %}
+                            <span class="status-badge status-completed">Completed</span>
+                        {% elif task.status == 'ON_HOLD' %}
+                            <span class="status-badge status-on-hold">On Hold</span>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- TASK SCHEDULE -->
+
+    <div class="col-12 col-lg-6">
+
+        <div class="detail-card">
+
+            <div class="detail-card-header">
+                <div class="detail-icon">
+                    <i class="bi bi-calendar-check"></i>
+                </div>
+                <h5>Task Schedule</h5>
+            </div>
+
+            <div class="detail-card-body">
+
+                <div class="row">
+
+                    <div class="col-6 detail-field">
+                        <span class="detail-label">Start Date</span>
+                        <div class="detail-value">
+                            {{ task.start_date|date:"d M Y" }}
+                        </div>
+                    </div>
+
+                    <div class="col-6 detail-field">
+                        <span class="detail-label">Due Date</span>
+                        <div class="detail-value">
+                            {{ task.due_date|date:"d M Y" }}
+                        </div>
+                    </div>
+
+                    <div class="col-6 detail-field">
+                        <span class="detail-label">Created On</span>
+                        <div class="detail-value">
+                            {{ task.created_at|date:"d M Y, h:i A" }}
+                        </div>
+                    </div>
+
+                    <div class="col-6 detail-field">
+                        <span class="detail-label">Completed On</span>
+                        <div class="detail-value">
+                            {% if task.completed_at %}
+                                {{ task.completed_at|date:"d M Y, h:i A" }}
+                            {% else %}
+                                Not completed
+                            {% endif %}
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- TASK PROGRESS -->
+
+    <div class="col-12 col-lg-6">
+
+        <div class="detail-card">
+
+            <div class="detail-card-header">
+                <div class="detail-icon">
+                    <i class="bi bi-graph-up-arrow"></i>
+                </div>
+                <h5>Task Progress</h5>
+            </div>
+
+            <div class="detail-card-body">
+
+                <div class="task-progress-value">
+                    {{ task.progress }}%
+                </div>
+
+                <div class="task-progress-track">
+
+                    <div class="task-progress-fill"
+                         style="width: {{ task.progress }}%;">
+                    </div>
+
+                </div>
+
+                <p class="progress-note">
+                    Progress will update as the employee works on the task.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

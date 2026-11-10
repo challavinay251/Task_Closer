@@ -1,0 +1,531 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Employee Workspace | Task Closer{% endblock %}</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+          rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <style>
+
+        :root {
+            --primary: #234b78;
+            --primary-dark: #173653;
+            --background: #f4f7fb;
+            --text-dark: #172b45;
+            --text-muted: #718096;
+            --border: #e8edf4;
+            --sidebar-width: 260px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--background);
+            color: var(--text-dark);
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: #fff;
+            border-right: 1px solid var(--border);
+            padding: 28px 18px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            transition: transform .3s ease;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 10px 32px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .brand-icon {
+            width: 43px;
+            height: 43px;
+            background: var(--primary);
+            color: #fff;
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+            flex-shrink: 0;
+        }
+
+        .brand h5 {
+            font-size: 17px;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .brand small {
+            color: var(--text-muted);
+            font-size: 10px;
+        }
+
+        .nav-section {
+            margin-top: 30px;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #9aa7b8;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            padding: 0 12px;
+            margin-bottom: 13px;
+        }
+
+        .nav-link-custom {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 12px 14px;
+            border-radius: 9px;
+            color: #65758a;
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+            margin-bottom: 5px;
+            transition: .2s ease;
+            border: 0;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+        }
+
+        .nav-link-custom i {
+            font-size: 17px;
+        }
+
+        .nav-link-custom.active {
+            background: #eaf0f8;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .nav-link-custom:hover {
+            background: #f2f5fa;
+            color: var(--primary);
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* MAIN CONTENT */
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+
+        .topbar {
+            height: 76px;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            padding: 0 35px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        .topbar h6 {
+            font-size: 15px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .employee-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-avatar {
+            width: 39px;
+            height: 39px;
+            border-radius: 50%;
+            background: #eaf0f8;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info strong {
+            display: block;
+            font-size: 12px;
+        }
+
+        .profile-info small {
+            color: var(--text-muted);
+            font-size: 10px;
+        }
+
+        /* PAGE CONTENT */
+
+        .dashboard-content {
+            padding: 35px;
+            min-height: calc(100vh - 140px);
+        }
+
+        .dashboard-footer {
+            padding: 25px 35px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 11px;
+        }
+
+        /* MOBILE MENU */
+
+        .mobile-menu-btn {
+            display: none;
+            border: none;
+            background: transparent;
+            font-size: 23px;
+            color: var(--primary);
+        }
+
+        .sidebar-overlay {
+            display: none;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 991px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .sidebar-overlay.show {
+                display: block;
+                position: fixed;
+                inset: 0;
+                background: rgba(15, 30, 50, .35);
+                z-index: 999;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .topbar {
+                padding: 0 20px;
+            }
+
+            .dashboard-content {
+                padding: 25px 20px;
+            }
+        }
+
+        @media (max-width: 575px) {
+
+            .topbar {
+                height: 65px;
+            }
+
+            .topbar h6 {
+                font-size: 13px;
+            }
+
+            .profile-info {
+                display: none;
+            }
+
+            .dashboard-content {
+                padding: 24px 15px;
+            }
+
+            .dashboard-footer {
+                padding: 20px 15px;
+            }
+        }
+
+        {% block extra_css %}{% endblock %}
+
+    </style>
+
+</head>
+
+<body>
+
+<!-- SIDEBAR OVERLAY -->
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar" id="sidebar">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            <i class="bi bi-check2-square"></i>
+        </div>
+
+        <div>
+            <h5>TASK CLOSER</h5>
+            <small>Employee Workspace</small>
+        </div>
+
+    </div>
+
+
+    <div class="nav-section">
+
+        <div class="nav-label">Workspace</div>
+
+        <a href="{% url 'dashboard:employee_dashboard' %}"
+           class="nav-link-custom {% block dashboard_active %}{% endblock %}">
+
+            <i class="bi bi-grid"></i>
+            Dashboard
+
+        </a>
+
+
+        <a href="{% url 'tasks:employee_task_list' %}"
+           class="nav-link-custom {% block tasks_active %}{% endblock %}">
+
+            <i class="bi bi-list-task"></i>
+            My Tasks
+
+        </a>
+
+
+        <a href="{% url 'daily_reports:create_daily_report' %}"
+           class="nav-link-custom {% block reports_active %}{% endblock %}">
+
+            <i class="bi bi-file-earmark-text"></i>
+            Daily Reports
+
+        </a>
+
+
+        <a href="{% url 'daily_reports:employee_report_history' %}"
+           class="nav-link-custom {% block history_active %}{% endblock %}">
+
+            <i class="bi bi-clock-history"></i>
+            Work History
+
+        </a>
+
+    </div>
+
+
+    <div class="sidebar-bottom">
+
+        <div class="nav-label">Account</div>
+
+        <a href="{% url 'employees:employee_profile' %}"
+           class="nav-link-custom {% block profile_active %}{% endblock %}">
+
+            <i class="bi bi-person-circle"></i>
+            My Profile
+
+        </a>
+
+
+        <form method="POST" action="{% url 'accounts:logout' %}">
+
+            {% csrf_token %}
+
+            <button type="submit" class="nav-link-custom">
+
+                <i class="bi bi-box-arrow-right"></i>
+                Logout
+
+            </button>
+
+        </form>
+
+    </div>
+
+</aside>
+
+
+<!-- MAIN CONTENT -->
+
+<main class="main-content">
+
+
+    <!-- TOPBAR -->
+
+    <header class="topbar">
+
+        <div class="d-flex align-items-center gap-3">
+
+            <button class="mobile-menu-btn"
+                    id="menuToggle"
+                    aria-label="Open navigation">
+
+                <i class="bi bi-list"></i>
+
+            </button>
+
+            <h6>{% block page_heading %}Employee Workspace{% endblock %}</h6>
+
+        </div>
+
+
+        <div class="employee-profile">
+
+            <div class="profile-avatar">
+
+                {% if request.user.profile_picture %}
+
+                    <img src="{{ request.user.profile_picture.url }}"
+                         alt="Profile picture">
+
+                {% else %}
+
+                    <i class="bi bi-person"></i>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="profile-info">
+
+                <strong>
+                    {{ request.user.get_full_name|default:request.user.username }}
+                </strong>
+
+                <small>Employee</small>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- PAGE CONTENT -->
+
+    <section class="dashboard-content">
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show"
+                     role="alert">
+
+                    {{ message }}
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="alert"
+                            aria-label="Close"></button>
+
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+
+        {% block content %}{% endblock %}
+
+    </section>
+
+
+    <!-- FOOTER -->
+
+    <footer class="dashboard-footer">
+
+        &copy; {% now "Y" %} Task Closer. All Rights Reserved.
+
+    </footer>
+
+</main>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<!-- MOBILE SIDEBAR SCRIPT -->
+
+<script>
+
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+    menuToggle.addEventListener('click', function () {
+
+        sidebar.classList.toggle('show');
+        sidebarOverlay.classList.toggle('show');
+
+    });
+
+    sidebarOverlay.addEventListener('click', function () {
+
+        sidebar.classList.remove('show');
+        sidebarOverlay.classList.remove('show');
+
+    });
+
+</script>
+
+
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>

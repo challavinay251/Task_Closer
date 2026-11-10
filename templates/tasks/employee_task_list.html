@@ -1,0 +1,789 @@
+
+{% extends "employee/base.html" %}
+
+{% block title %}My Tasks | Task Closer{% endblock %}
+{% block page_heading %}My Tasks{% endblock %}
+{% block tasks_active %}active{% endblock %}
+
+{% block extra_css %}
+
+/* PAGE HEADER */
+.page-header {
+    margin-bottom: 27px;
+}
+
+.page-header h2 {
+    font-size: 25px;
+    font-weight: 800;
+    margin-bottom: 7px;
+}
+
+.page-header p {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin: 0;
+}
+
+/* TASK STATISTICS */
+.task-stat-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    padding: 20px;
+    height: 100%;
+}
+
+.task-stat-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: #eaf0f8;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    margin-bottom: 15px;
+}
+
+.task-stat-card h3 {
+    font-size: 25px;
+    font-weight: 800;
+    margin-bottom: 5px;
+}
+
+.task-stat-card p {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+/* TASK PANEL */
+.task-panel {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    margin-top: 27px;
+    overflow: hidden;
+}
+
+.task-panel-header {
+    padding: 21px 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.task-panel-header h5 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.task-panel-header p {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+/* FILTERS */
+.task-filters {
+    padding: 17px 24px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.task-search {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+}
+
+.task-search i {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9aa7b8;
+}
+
+.task-search input,
+.task-filter {
+    height: 42px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0 12px;
+    font-size: 12px;
+    background: #fff;
+    width: 100%;
+    outline: none;
+}
+
+.task-search input {
+    padding-left: 38px;
+}
+
+.task-filter {
+    width: auto;
+    min-width: 150px;
+}
+
+.task-search input:focus,
+.task-filter:focus {
+    border-color: var(--primary);
+}
+
+/* TASK CARDS */
+.task-list {
+    padding: 20px 24px 24px;
+}
+
+.task-card {
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    padding: 20px;
+    margin-bottom: 15px;
+    transition: border-color .2s ease;
+}
+
+.task-card:last-child {
+    margin-bottom: 0;
+}
+
+.task-card:hover {
+    border-color: #b7c9df;
+}
+
+.task-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 13px;
+}
+
+.task-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 7px;
+}
+
+.task-description {
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 1.7;
+    margin: 0;
+    white-space: pre-line;
+}
+
+.task-badges {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+}
+
+.priority-badge,
+.status-badge {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.priority-low {
+    background: #edf3fa;
+    color: #55708f;
+}
+
+.priority-medium {
+    background: #eaf0f8;
+    color: #234b78;
+}
+
+.priority-high {
+    background: #fff1df;
+    color: #c77a12;
+}
+
+.priority-urgent {
+    background: #fdebec;
+    color: #dc3545;
+}
+
+.status-pending {
+    background: #fff5df;
+    color: #b7791f;
+}
+
+.status-in-progress {
+    background: #eaf0ff;
+    color: #4169b2;
+}
+
+.status-completed {
+    background: #e8f7ef;
+    color: #198754;
+}
+
+.status-on-hold {
+    background: #f0eafa;
+    color: #7952a0;
+}
+
+/* TASK META */
+.task-meta {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+    margin-top: 17px;
+    padding-top: 15px;
+    border-top: 1px solid #edf1f6;
+}
+
+.task-meta-item {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.task-meta-item strong {
+    display: block;
+    color: var(--text-dark);
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+/* PROGRESS */
+.task-progress {
+    margin-top: 18px;
+}
+
+.task-progress-heading {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.task-progress .progress {
+    height: 7px;
+    background: #edf1f6;
+    border-radius: 10px;
+}
+
+.task-progress .progress-bar {
+    background: var(--primary);
+    border-radius: 10px;
+}
+
+/* SUBMIT TASK REPORT BUTTON */
+.task-report-action {
+    margin-top: 18px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-submit-task-report {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 17px;
+    background: var(--primary);
+    color: #fff;
+    border: 1px solid var(--primary);
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all .2s ease;
+}
+
+.btn-submit-task-report:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+/* EMPTY STATE */
+.empty-state {
+    padding: 55px 20px;
+    text-align: center;
+}
+
+.empty-icon {
+    width: 65px;
+    height: 65px;
+    background: #eaf0f8;
+    color: var(--primary);
+    border-radius: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 27px;
+    margin: 0 auto 18px;
+}
+
+.empty-state h5 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.empty-state p {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin: 0;
+}
+
+.no-results {
+    display: none;
+    padding: 30px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 575px) {
+
+    .page-header h2 {
+        font-size: 21px;
+    }
+
+    .task-panel-header,
+    .task-filters {
+        padding: 17px;
+    }
+
+    .task-search {
+        min-width: 100%;
+    }
+
+    .task-filter {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .task-list {
+        padding: 15px;
+    }
+
+    .task-card {
+        padding: 16px;
+    }
+
+    .task-report-action {
+        justify-content: stretch;
+    }
+
+    .btn-submit-task-report {
+        width: 100%;
+    }
+}
+
+{% endblock %}
+
+
+{% block content %}
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+
+    <h2>My Tasks</h2>
+
+    <p>
+        View your assigned work, priorities, deadlines, and progress.
+    </p>
+
+</div>
+
+
+<!-- TASK STATISTICS -->
+<div class="row g-3">
+
+    <div class="col-6 col-lg-3">
+        <div class="task-stat-card">
+
+            <div class="task-stat-icon">
+                <i class="bi bi-list-task"></i>
+            </div>
+
+            <h3>{{ total_tasks }}</h3>
+            <p>Total Assigned Tasks</p>
+
+        </div>
+    </div>
+
+
+    <div class="col-6 col-lg-3">
+        <div class="task-stat-card">
+
+            <div class="task-stat-icon">
+                <i class="bi bi-hourglass-split"></i>
+            </div>
+
+            <h3>{{ pending_tasks }}</h3>
+            <p>Pending Tasks</p>
+
+        </div>
+    </div>
+
+
+    <div class="col-6 col-lg-3">
+        <div class="task-stat-card">
+
+            <div class="task-stat-icon">
+                <i class="bi bi-arrow-repeat"></i>
+            </div>
+
+            <h3>{{ in_progress_tasks }}</h3>
+            <p>In Progress</p>
+
+        </div>
+    </div>
+
+
+    <div class="col-6 col-lg-3">
+        <div class="task-stat-card">
+
+            <div class="task-stat-icon">
+                <i class="bi bi-check-circle"></i>
+            </div>
+
+            <h3>{{ completed_tasks }}</h3>
+            <p>Completed Tasks</p>
+
+        </div>
+    </div>
+
+</div>
+
+
+<!-- MY TASKS -->
+<div class="task-panel">
+
+    <div class="task-panel-header">
+
+        <h5>My Assigned Tasks</h5>
+
+        <p>
+            All tasks assigned to your employee account.
+        </p>
+
+    </div>
+
+
+    {% if tasks %}
+
+        <!-- FILTERS -->
+        <div class="task-filters">
+
+            <div class="task-search">
+
+                <i class="bi bi-search"></i>
+
+                <input type="text"
+                       id="taskSearch"
+                       placeholder="Search your tasks...">
+
+            </div>
+
+
+            <select id="statusFilter" class="task-filter">
+
+                <option value="">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="in progress">In Progress</option>
+                <option value="completed">Completed</option>
+                <option value="on hold">On Hold</option>
+
+            </select>
+
+
+            <select id="priorityFilter" class="task-filter">
+
+                <option value="">All Priorities</option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+                <option value="urgent">Urgent</option>
+
+            </select>
+
+        </div>
+
+
+        <!-- TASK CARDS -->
+        <div class="task-list">
+
+            {% for task in tasks %}
+
+                <div class="task-card"
+                     data-status="{{ task.get_status_display|lower }}"
+                     data-priority="{{ task.get_priority_display|lower }}">
+
+                    <div class="task-card-top">
+
+                        <div style="flex: 1; min-width: 200px;">
+
+                            <h5 class="task-title">
+                                {{ task.title }}
+                            </h5>
+
+                            <p class="task-description">
+                                {{ task.description|truncatechars:220 }}
+                            </p>
+
+                        </div>
+
+
+                        <div class="task-badges">
+
+                            <span class="priority-badge priority-{{ task.priority|lower }}">
+                                {{ task.get_priority_display }}
+                            </span>
+
+
+                            {% if task.status == 'PENDING' %}
+
+                                <span class="status-badge status-pending">
+                                    Pending
+                                </span>
+
+                            {% elif task.status == 'IN_PROGRESS' %}
+
+                                <span class="status-badge status-in-progress">
+                                    In Progress
+                                </span>
+
+                            {% elif task.status == 'COMPLETED' %}
+
+                                <span class="status-badge status-completed">
+                                    Completed
+                                </span>
+
+                            {% elif task.status == 'ON_HOLD' %}
+
+                                <span class="status-badge status-on-hold">
+                                    On Hold
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- TASK META -->
+                    <div class="task-meta">
+
+                        <div class="task-meta-item">
+
+                            <i class="bi bi-calendar-event me-1"></i>
+                            Start Date
+
+                            <strong>
+                                {{ task.start_date|date:"d M Y" }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="task-meta-item">
+
+                            <i class="bi bi-calendar-check me-1"></i>
+                            Due Date
+
+                            <strong>
+                                {{ task.due_date|date:"d M Y" }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="task-meta-item">
+
+                            <i class="bi bi-person me-1"></i>
+                            Assigned By
+
+                            <strong>
+
+                                {% if task.assigned_by %}
+
+                                    {{ task.assigned_by.get_full_name|default:task.assigned_by.username }}
+
+                                {% else %}
+
+                                    Admin
+
+                                {% endif %}
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- TASK PROGRESS -->
+                    <div class="task-progress">
+
+                        <div class="task-progress-heading">
+
+                            <span>Task Progress</span>
+
+                            <span>{{ task.progress }}%</span>
+
+                        </div>
+
+
+                        <div class="progress">
+
+                            <div class="progress-bar"
+                                 role="progressbar"
+                                 style="width: {{ task.progress }}%;"
+                                 aria-valuenow="{{ task.progress }}"
+                                 aria-valuemin="0"
+                                 aria-valuemax="100">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- SUBMIT TASK REPORT BUTTON -->
+                    <div class="task-report-action">
+
+                        <a href="{% url 'daily_reports:create_daily_report' %}?task={{ task.id }}"
+                           class="btn-submit-task-report">
+
+                            <i class="bi bi-file-earmark-plus"></i>
+
+                            Submit Task Report
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        <div class="no-results" id="noResults">
+            No tasks match your search or filters.
+        </div>
+
+
+    {% else %}
+
+        <!-- EMPTY STATE -->
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                <i class="bi bi-clipboard-check"></i>
+            </div>
+
+            <h5>No Tasks Assigned Yet</h5>
+
+            <p>
+                Your assigned tasks will appear here when the Admin assigns work to you.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    const searchInput = document.getElementById('taskSearch');
+    const statusFilter = document.getElementById('statusFilter');
+    const priorityFilter = document.getElementById('priorityFilter');
+
+    const taskCards = document.querySelectorAll('.task-card');
+    const noResults = document.getElementById('noResults');
+
+
+    function filterTasks() {
+
+        if (!searchInput || !statusFilter || !priorityFilter) {
+            return;
+        }
+
+        const searchValue = searchInput.value.toLowerCase().trim();
+
+        const selectedStatus = statusFilter.value;
+
+        const selectedPriority = priorityFilter.value;
+
+        let visibleCount = 0;
+
+
+        taskCards.forEach(function (card) {
+
+            const matchesSearch =
+                card.innerText.toLowerCase().includes(searchValue);
+
+            const matchesStatus =
+                !selectedStatus ||
+                card.dataset.status === selectedStatus;
+
+            const matchesPriority =
+                !selectedPriority ||
+                card.dataset.priority === selectedPriority;
+
+            const shouldShow =
+                matchesSearch && matchesStatus && matchesPriority;
+
+            card.style.display = shouldShow ? '' : 'none';
+
+            if (shouldShow) {
+                visibleCount++;
+            }
+
+        });
+
+
+        if (noResults) {
+
+            noResults.style.display =
+                visibleCount === 0 ? 'block' : 'none';
+
+        }
+
+    }
+
+
+    if (searchInput && statusFilter && priorityFilter) {
+
+        searchInput.addEventListener('input', filterTasks);
+
+        statusFilter.addEventListener('change', filterTasks);
+
+        priorityFilter.addEventListener('change', filterTasks);
+
+    }
+
+});
+
+</script>
+
+{% endblock %}

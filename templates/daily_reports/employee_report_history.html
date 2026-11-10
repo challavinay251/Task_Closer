@@ -1,0 +1,761 @@
+
+{% extends "employee/base.html" %}
+
+{% block title %}My Daily Reports{% endblock %}
+{% block reports_active %}active{% endblock %}
+{% block history_active %}active{% endblock %}
+
+{% block extra_css %}
+<style>
+    .history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 27px;
+    }
+
+    .history-header h2 {
+        font-size: 25px;
+        font-weight: 800;
+        color: #172b45;
+        margin-bottom: 7px;
+    }
+
+    .history-header p {
+        font-size: 13px;
+        color: #718096;
+        margin: 0;
+    }
+
+    .new-report-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #234b78;
+        color: #fff;
+        padding: 11px 17px;
+        border-radius: 9px;
+        font-size: 12px;
+        font-weight: 650;
+        text-decoration: none;
+        transition: .2s ease;
+    }
+
+    .new-report-btn:hover {
+        background: #173653;
+        color: #fff;
+    }
+
+    .history-stat-card {
+        background: #fff;
+        border: 1px solid #e8edf4;
+        border-radius: 13px;
+        padding: 20px;
+        height: 100%;
+    }
+
+    .history-stat-icon {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #eaf0f8;
+        color: #234b78;
+        border-radius: 10px;
+        font-size: 19px;
+        margin-bottom: 16px;
+    }
+
+    .history-stat-number {
+        font-size: 27px;
+        font-weight: 800;
+        color: #172b45;
+        margin-bottom: 4px;
+    }
+
+    .history-stat-label {
+        color: #718096;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .history-panel {
+        background: #fff;
+        border: 1px solid #e8edf4;
+        border-radius: 13px;
+        padding: 24px;
+        margin-top: 27px;
+    }
+
+    .panel-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 22px;
+    }
+
+    .panel-heading h5 {
+        color: #172b45;
+        font-size: 16px;
+        font-weight: 750;
+        margin: 0;
+    }
+
+    .panel-heading p {
+        color: #718096;
+        font-size: 12px;
+        margin: 5px 0 0;
+    }
+
+    .filter-form {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 22px;
+    }
+
+    .filter-form .form-control,
+    .filter-form .form-select {
+        min-height: 42px;
+        border: 1px solid #e0e7ef;
+        border-radius: 8px;
+        font-size: 12px;
+    }
+
+    .filter-form .search-input {
+        min-width: 220px;
+        flex: 1;
+    }
+
+    .btn-search {
+        background: #234b78;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 17px;
+        font-size: 12px;
+        font-weight: 650;
+    }
+
+    .btn-search:hover {
+        background: #173653;
+        color: #fff;
+    }
+
+    .btn-reset {
+        border: 1px solid #e0e7ef;
+        color: #64748b;
+        background: #fff;
+        border-radius: 8px;
+        padding: 10px 15px;
+        font-size: 12px;
+        text-decoration: none;
+    }
+
+    .btn-reset:hover {
+        background: #f4f7fb;
+        color: #234b78;
+    }
+
+    .history-table {
+        margin-bottom: 0;
+        vertical-align: middle;
+    }
+
+    .history-table thead th {
+        background: #f7f9fc;
+        color: #718096;
+        font-size: 10px;
+        font-weight: 750;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        padding: 15px 13px;
+        white-space: nowrap;
+        border-bottom: 1px solid #e8edf4;
+    }
+
+    .history-table tbody td {
+        padding: 16px 13px;
+        font-size: 12px;
+        color: #334155;
+        border-bottom: 1px solid #edf1f6;
+    }
+
+    .history-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .report-date {
+        color: #172b45;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .report-summary {
+        max-width: 300px;
+        color: #64748b;
+        line-height: 1.7;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 7px;
+        font-size: 10px;
+        font-weight: 750;
+        white-space: nowrap;
+    }
+
+    .status-submitted {
+        background: #eaf2ff;
+        color: #2457a6;
+    }
+
+    .status-approved {
+        background: #e8f7ee;
+        color: #16804a;
+    }
+
+    .status-rejected {
+        background: #fff0f0;
+        color: #c43d3d;
+    }
+
+    .status-revision {
+        background: #fff5e5;
+        color: #b7791f;
+    }
+
+    .status-draft {
+        background: #f0f2f5;
+        color: #64748b;
+    }
+
+    .feedback-cell {
+        min-width: 180px;
+        max-width: 260px;
+        color: #64748b;
+        line-height: 1.6;
+    }
+
+    .feedback-cell .feedback-label {
+        color: #234b78;
+        font-size: 10px;
+        font-weight: 750;
+        margin-bottom: 4px;
+    }
+
+    .reviewer-text {
+        color: #718096;
+        font-size: 11px;
+    }
+
+    /* Revision action */
+    .btn-revise {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        background: #fff5e5;
+        border: 1px solid #f0d9ad;
+        color: #986500;
+        padding: 9px 12px;
+        border-radius: 7px;
+        font-size: 11px;
+        font-weight: 700;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: .2s ease;
+    }
+
+    .btn-revise:hover {
+        background: #234b78;
+        border-color: #234b78;
+        color: #fff;
+    }
+
+    .action-waiting {
+        color: #94a3b8;
+        font-size: 11px;
+        white-space: nowrap;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 55px 20px;
+    }
+
+    .empty-icon {
+        width: 65px;
+        height: 65px;
+        background: #eaf0f8;
+        color: #234b78;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 27px;
+        margin: 0 auto 17px;
+    }
+
+    .empty-state h5 {
+        font-size: 16px;
+        font-weight: 750;
+        color: #172b45;
+        margin-bottom: 8px;
+    }
+
+    .empty-state p {
+        font-size: 12px;
+        color: #718096;
+        margin-bottom: 18px;
+    }
+
+    .pagination {
+        margin-bottom: 0;
+        gap: 5px;
+    }
+
+    .pagination .page-link {
+        border: 1px solid #e8edf4;
+        border-radius: 7px;
+        color: #234b78;
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+
+    .pagination .active .page-link {
+        background: #234b78;
+        border-color: #234b78;
+        color: #fff;
+    }
+
+    .pagination-info {
+        font-size: 11px;
+        color: #718096;
+    }
+
+    @media (max-width: 767px) {
+        .history-panel {
+            padding: 17px;
+        }
+
+        .history-header h2 {
+            font-size: 21px;
+        }
+
+        .filter-form {
+            align-items: stretch;
+        }
+
+        .filter-form .search-input {
+            min-width: 100%;
+        }
+
+        .filter-form .form-select {
+            flex: 1;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<!-- PAGE HEADER -->
+<div class="history-header">
+    <div>
+        <h2>My Daily Reports</h2>
+        <p>
+            Track your daily submissions, review decisions,
+            and feedback from your Admin.
+        </p>
+    </div>
+
+    <a href="{% url 'daily_reports:create_daily_report' %}"
+       class="new-report-btn">
+        <i class="bi bi-plus-circle"></i>
+        Submit Daily Report
+    </a>
+</div>
+
+
+<!-- REPORT STATISTICS -->
+<div class="row g-3">
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="history-stat-card">
+            <div class="history-stat-icon">
+                <i class="bi bi-file-earmark-text"></i>
+            </div>
+            <div class="history-stat-number">{{ total_reports }}</div>
+            <div class="history-stat-label">Total Reports</div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="history-stat-card">
+            <div class="history-stat-icon">
+                <i class="bi bi-check-circle"></i>
+            </div>
+            <div class="history-stat-number">{{ approved_reports }}</div>
+            <div class="history-stat-label">Approved Reports</div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="history-stat-card">
+            <div class="history-stat-icon">
+                <i class="bi bi-arrow-repeat"></i>
+            </div>
+            <div class="history-stat-number">{{ revision_reports }}</div>
+            <div class="history-stat-label">Revision Requested</div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="history-stat-card">
+            <div class="history-stat-icon">
+                <i class="bi bi-x-circle"></i>
+            </div>
+            <div class="history-stat-number">{{ rejected_reports }}</div>
+            <div class="history-stat-label">Rejected Reports</div>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- REPORT HISTORY -->
+<div class="history-panel">
+
+    <div class="panel-heading">
+        <div>
+            <h5>
+                <i class="bi bi-clock-history me-2"></i>
+                Report Submission History
+            </h5>
+            <p>
+                View your submitted reports and Admin review feedback.
+            </p>
+        </div>
+
+        <span class="badge bg-light text-dark border">
+            {{ page_obj.paginator.count }} Reports
+        </span>
+    </div>
+
+
+    <!-- SEARCH AND FILTER -->
+    <form method="GET" class="filter-form">
+
+        <input type="text"
+               name="q"
+               class="form-control search-input"
+               placeholder="Search work summary or feedback..."
+               value="{{ search_query }}">
+
+        <select name="status"
+                class="form-select"
+                style="max-width: 190px;">
+
+            <option value="">All Statuses</option>
+
+            {% for value, label in status_choices %}
+                <option value="{{ value }}"
+                    {% if selected_status == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+            {% endfor %}
+
+        </select>
+
+        <button type="submit" class="btn-search">
+            <i class="bi bi-search me-1"></i>
+            Search
+        </button>
+
+        <a href="{% url 'daily_reports:employee_report_history' %}"
+           class="btn-reset">
+            <i class="bi bi-arrow-counterclockwise me-1"></i>
+            Reset
+        </a>
+
+    </form>
+
+
+    <!-- REPORT TABLE -->
+    <div class="table-responsive">
+
+        <table class="table history-table">
+
+            <thead>
+                <tr>
+                    <th>Report Date</th>
+                    <th>Work Summary</th>
+                    <th>Activities</th>
+                    <th>Status</th>
+                    <th>Admin Feedback</th>
+                    <th>Reviewed By</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for report in reports %}
+
+                    <tr>
+
+                        <!-- REPORT DATE -->
+                        <td>
+                            <div class="report-date">
+                                {{ report.report_date|date:"d M Y" }}
+                            </div>
+                        </td>
+
+
+                        <!-- WORK SUMMARY -->
+                        <td>
+                            <div class="report-summary">
+                                {{ report.summary|truncatechars:100 }}
+                            </div>
+                        </td>
+
+
+                        <!-- ACTIVITIES -->
+                        <td>
+                            <span class="text-muted">
+                                <i class="bi bi-list-check me-1"></i>
+                                {{ report.work_entries.count }}
+                            </span>
+                        </td>
+
+
+                        <!-- STATUS -->
+                        <td>
+
+                            {% if report.status == 'SUBMITTED' %}
+                                <span class="status-badge status-submitted">
+                                    Submitted
+                                </span>
+
+                            {% elif report.status == 'APPROVED' %}
+                                <span class="status-badge status-approved">
+                                    Approved
+                                </span>
+
+                            {% elif report.status == 'REJECTED' %}
+                                <span class="status-badge status-rejected">
+                                    Rejected
+                                </span>
+
+                            {% elif report.status == 'REVISION' %}
+                                <span class="status-badge status-revision">
+                                    Revision Requested
+                                </span>
+
+                            {% else %}
+                                <span class="status-badge status-draft">
+                                    Draft
+                                </span>
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- ADMIN FEEDBACK -->
+                        <td>
+                            <div class="feedback-cell">
+
+                                {% if report.admin_feedback %}
+
+                                    <div class="feedback-label">
+                                        <i class="bi bi-chat-left-text me-1"></i>
+                                        Admin Comment
+                                    </div>
+
+                                    {{ report.admin_feedback|truncatechars:120 }}
+
+                                {% else %}
+
+                                    <span class="text-muted">
+                                        No feedback yet
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+                        </td>
+
+
+                        <!-- REVIEWED BY -->
+                        <td>
+
+                            {% if report.reviewed_by %}
+                                <span class="reviewer-text">
+                                    {{ report.reviewed_by.get_full_name|default:report.reviewed_by.username }}
+                                </span>
+                            {% else %}
+                                <span class="text-muted">
+                                    Not reviewed
+                                </span>
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- ACTION -->
+                        <td>
+
+                            {% if report.status == 'REVISION' %}
+
+                                <a href="{% url 'daily_reports:edit_revision_report' report.id %}"
+                                   class="btn-revise">
+                                    <i class="bi bi-pencil-square"></i>
+                                    Edit &amp; Resubmit
+                                </a>
+
+                            {% elif report.status == 'SUBMITTED' %}
+
+                                <span class="action-waiting">
+                                    Under Review
+                                </span>
+
+                            {% elif report.status == 'APPROVED' %}
+
+                                <span class="action-waiting">
+                                    Completed
+                                </span>
+
+                            {% elif report.status == 'REJECTED' %}
+
+                                <span class="action-waiting">
+                                    Rejected
+                                </span>
+
+                            {% else %}
+
+                                <span class="action-waiting">
+                                    No action required
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="7">
+
+                            <div class="empty-state">
+
+                                <div class="empty-icon">
+                                    <i class="bi bi-file-earmark-x"></i>
+                                </div>
+
+                                <h5>No Daily Reports Found</h5>
+
+                                <p>
+                                    You haven't submitted any daily reports
+                                    matching your search or filter.
+                                </p>
+
+                                <a href="{% url 'daily_reports:create_daily_report' %}"
+                                   class="new-report-btn">
+                                    <i class="bi bi-plus-circle"></i>
+                                    Submit Your First Report
+                                </a>
+
+                            </div>
+
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- PAGINATION -->
+    {% if page_obj.has_other_pages %}
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mt-4">
+
+            <div class="pagination-info">
+                Showing {{ page_obj.start_index }}
+                to {{ page_obj.end_index }}
+                of {{ page_obj.paginator.count }} reports
+            </div>
+
+            <nav aria-label="Report history pagination">
+
+                <ul class="pagination">
+
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?q={{ search_query|urlencode }}&status={{ selected_status|urlencode }}&page={{ page_obj.previous_page_number }}">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+
+
+                    {% for page_number in page_obj.paginator.page_range %}
+
+                        {% if page_obj.number == page_number %}
+
+                            <li class="page-item active">
+                                <span class="page-link">
+                                    {{ page_number }}
+                                </span>
+                            </li>
+
+                        {% elif page_number > page_obj.number|add:'-2' and page_number < page_obj.number|add:'2' %}
+
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="?q={{ search_query|urlencode }}&status={{ selected_status|urlencode }}&page={{ page_number }}">
+                                    {{ page_number }}
+                                </a>
+                            </li>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?q={{ search_query|urlencode }}&status={{ selected_status|urlencode }}&page={{ page_obj.next_page_number }}">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+
+                </ul>
+
+            </nav>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

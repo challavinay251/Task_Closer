@@ -1,0 +1,739 @@
+
+{% extends "admin/base.html" %}
+
+{% block title %}Daily Reports Management{% endblock %}
+{% block page_heading %}Daily Reports Management{% endblock %}
+{% block reports_active %}active{% endblock %}
+
+{% block extra_style %}
+<style>
+    .reports-header {
+        margin-bottom: 28px;
+    }
+
+    .reports-header h2 {
+        font-size: 24px;
+        font-weight: 800;
+        color: #172b45;
+        margin-bottom: 8px;
+    }
+
+    .reports-header p {
+        font-size: 13px;
+        color: #718096;
+        margin: 0;
+    }
+
+    .report-stat-card {
+        background: #fff;
+        border: 1px solid #e8edf4;
+        border-radius: 13px;
+        padding: 21px;
+        height: 100%;
+    }
+
+    .stat-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 17px;
+    }
+
+    .stat-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        background: #eaf0f8;
+        color: #234b78;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 19px;
+    }
+
+    .stat-number {
+        font-size: 27px;
+        font-weight: 800;
+        color: #172b45;
+        margin-bottom: 4px;
+    }
+
+    .stat-label {
+        font-size: 12px;
+        color: #718096;
+        font-weight: 600;
+    }
+
+    .reports-panel {
+        background: #fff;
+        border: 1px solid #e8edf4;
+        border-radius: 13px;
+        padding: 24px;
+        margin-top: 27px;
+    }
+
+    .panel-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 22px;
+    }
+
+    .panel-heading h5 {
+        font-size: 16px;
+        font-weight: 750;
+        margin: 0;
+        color: #172b45;
+    }
+
+    .panel-heading p {
+        font-size: 12px;
+        color: #718096;
+        margin: 5px 0 0;
+    }
+
+    .filter-form {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 22px;
+    }
+
+    .filter-form .form-control,
+    .filter-form .form-select {
+        min-height: 42px;
+        border: 1px solid #e0e7ef;
+        border-radius: 8px;
+        font-size: 12px;
+    }
+
+    .filter-form .search-input {
+        min-width: 220px;
+        flex: 1;
+    }
+
+    .btn-filter {
+        background: #234b78;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 17px;
+        font-size: 12px;
+        font-weight: 650;
+    }
+
+    .btn-filter:hover {
+        background: #173653;
+        color: #fff;
+    }
+
+    .btn-reset {
+        border: 1px solid #e0e7ef;
+        color: #64748b;
+        background: #fff;
+        border-radius: 8px;
+        padding: 10px 15px;
+        font-size: 12px;
+        text-decoration: none;
+    }
+
+    .btn-reset:hover {
+        background: #f4f7fb;
+        color: #234b78;
+    }
+
+    .reports-table {
+        margin-bottom: 0;
+        vertical-align: middle;
+    }
+
+    .reports-table thead th {
+        background: #f7f9fc;
+        color: #718096;
+        font-size: 10px;
+        font-weight: 750;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        padding: 15px 13px;
+        white-space: nowrap;
+        border-bottom: 1px solid #e8edf4;
+    }
+
+    .reports-table tbody td {
+        padding: 16px 13px;
+        font-size: 12px;
+        color: #334155;
+        border-bottom: 1px solid #edf1f6;
+    }
+
+    .reports-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .employee-name {
+        font-weight: 700;
+        color: #172b45;
+        margin-bottom: 4px;
+    }
+
+    .employee-id {
+        font-size: 10px;
+        color: #8794a6;
+    }
+
+    .report-summary {
+        max-width: 240px;
+        color: #64748b;
+        line-height: 1.6;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 10px;
+        font-weight: 750;
+        white-space: nowrap;
+    }
+
+    .status-submitted {
+        background: #eaf2ff;
+        color: #2457a6;
+    }
+
+    .status-approved {
+        background: #e8f7ee;
+        color: #16804a;
+    }
+
+    .status-rejected {
+        background: #fff0f0;
+        color: #c43d3d;
+    }
+
+    .status-revision {
+        background: #fff5e5;
+        color: #b7791f;
+    }
+
+    .status-draft {
+        background: #f0f2f5;
+        color: #64748b;
+    }
+
+    .entry-count {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        color: #64748b;
+        font-weight: 600;
+    }
+
+    .reviewer-name {
+        color: #64748b;
+        font-size: 11px;
+    }
+
+    .btn-view-report {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        background: #234b78;
+        color: #fff;
+        border: none;
+        border-radius: 7px;
+        padding: 8px 12px;
+        font-size: 11px;
+        font-weight: 650;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: .2s ease;
+    }
+
+    .btn-view-report:hover {
+        background: #173653;
+        color: #fff;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 55px 20px;
+    }
+
+    .empty-icon {
+        width: 65px;
+        height: 65px;
+        background: #eaf0f8;
+        color: #234b78;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 27px;
+        margin: 0 auto 17px;
+    }
+
+    .empty-state h5 {
+        font-size: 16px;
+        font-weight: 750;
+        color: #172b45;
+        margin-bottom: 8px;
+    }
+
+    .empty-state p {
+        font-size: 12px;
+        color: #718096;
+        margin: 0;
+    }
+
+    .pagination {
+        margin-bottom: 0;
+        gap: 5px;
+    }
+
+    .pagination .page-link {
+        border: 1px solid #e8edf4;
+        border-radius: 7px;
+        color: #234b78;
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+
+    .pagination .active .page-link {
+        background: #234b78;
+        border-color: #234b78;
+        color: #fff;
+    }
+
+    .pagination-info {
+        font-size: 11px;
+        color: #718096;
+    }
+
+    @media (max-width: 767px) {
+        .reports-panel {
+            padding: 17px;
+        }
+
+        .reports-header h2 {
+            font-size: 21px;
+        }
+
+        .filter-form {
+            align-items: stretch;
+        }
+
+        .filter-form .search-input {
+            min-width: 100%;
+        }
+
+        .filter-form .form-select {
+            flex: 1;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<!-- PAGE HEADER -->
+
+<div class="reports-header">
+
+    <h2>Daily Reports Management</h2>
+
+    <p>
+        Review employee daily submissions, monitor reporting activity,
+        and manage report approvals.
+    </p>
+
+</div>
+
+
+<!-- REPORT STATISTICS -->
+
+<div class="row g-3">
+
+    <div class="col-12 col-sm-6 col-xl-3">
+
+        <div class="report-stat-card">
+
+            <div class="stat-top">
+                <div class="stat-icon">
+                    <i class="bi bi-file-earmark-text"></i>
+                </div>
+            </div>
+
+            <div class="stat-number">{{ total_reports }}</div>
+            <div class="stat-label">Total Reports</div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-12 col-sm-6 col-xl-3">
+
+        <div class="report-stat-card">
+
+            <div class="stat-top">
+                <div class="stat-icon">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+            </div>
+
+            <div class="stat-number">{{ submitted_reports }}</div>
+            <div class="stat-label">Awaiting Review</div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-12 col-sm-6 col-xl-3">
+
+        <div class="report-stat-card">
+
+            <div class="stat-top">
+                <div class="stat-icon">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+            </div>
+
+            <div class="stat-number">{{ approved_reports }}</div>
+            <div class="stat-label">Approved Reports</div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-12 col-sm-6 col-xl-3">
+
+        <div class="report-stat-card">
+
+            <div class="stat-top">
+                <div class="stat-icon">
+                    <i class="bi bi-arrow-repeat"></i>
+                </div>
+            </div>
+
+            <div class="stat-number">{{ revision_reports }}</div>
+            <div class="stat-label">Revision Requested</div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- REPORT LIST -->
+
+<div class="reports-panel">
+
+    <div class="panel-heading">
+
+        <div>
+            <h5>
+                <i class="bi bi-journal-text me-2"></i>
+                Employee Submissions
+            </h5>
+
+            <p>View and search all employee daily reports.</p>
+        </div>
+
+        <span class="badge bg-light text-dark border">
+            {{ page_obj.paginator.count }} Reports
+        </span>
+
+    </div>
+
+
+    <!-- SEARCH AND FILTER -->
+
+    <form method="GET" class="filter-form">
+
+        <input type="text"
+               name="q"
+               class="form-control search-input"
+               placeholder="Search employee, ID or report summary..."
+               value="{{ search_query }}">
+
+        <select name="status"
+                class="form-select"
+                style="max-width: 190px;">
+
+            <option value="">All Statuses</option>
+
+            {% for value, label in status_choices %}
+                <option value="{{ value }}"
+                    {% if selected_status == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+            {% endfor %}
+
+        </select>
+
+        <button type="submit" class="btn-filter">
+            <i class="bi bi-search me-1"></i>
+            Search
+        </button>
+
+        <a href="{% url 'daily_reports:admin_daily_reports' %}"
+           class="btn-reset">
+            <i class="bi bi-arrow-counterclockwise me-1"></i>
+            Reset
+        </a>
+
+    </form>
+
+
+    <!-- REPORT TABLE -->
+
+    <div class="table-responsive">
+
+        <table class="table reports-table">
+
+            <thead>
+                <tr>
+                    <th>Employee</th>
+                    <th>Report Date</th>
+                    <th>Work Summary</th>
+                    <th>Activities</th>
+                    <th>Status</th>
+                    <th>Reviewed By</th>
+                    <th>Submitted</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+
+            <tbody>
+
+                {% for report in reports %}
+
+                    <tr>
+
+                        <!-- EMPLOYEE -->
+
+                        <td>
+                            <div class="employee-name">
+                                {{ report.employee.user.get_full_name|default:report.employee.user.username }}
+                            </div>
+
+                            <div class="employee-id">
+                                ID: {{ report.employee.employee_id }}
+                            </div>
+                        </td>
+
+
+                        <!-- REPORT DATE -->
+
+                        <td class="text-nowrap">
+                            {{ report.report_date|date:"d M Y" }}
+                        </td>
+
+
+                        <!-- SUMMARY -->
+
+                        <td>
+                            <div class="report-summary">
+                                {{ report.summary|truncatechars:90 }}
+                            </div>
+                        </td>
+
+
+                        <!-- ACTIVITIES -->
+
+                        <td>
+                            <span class="entry-count">
+                                <i class="bi bi-list-check"></i>
+                                {{ report.work_entries.count }}
+                            </span>
+                        </td>
+
+
+                        <!-- STATUS -->
+
+                        <td>
+
+                            {% if report.status == 'SUBMITTED' %}
+                                <span class="status-badge status-submitted">
+                                    Submitted
+                                </span>
+
+                            {% elif report.status == 'APPROVED' %}
+                                <span class="status-badge status-approved">
+                                    Approved
+                                </span>
+
+                            {% elif report.status == 'REJECTED' %}
+                                <span class="status-badge status-rejected">
+                                    Rejected
+                                </span>
+
+                            {% elif report.status == 'REVISION' %}
+                                <span class="status-badge status-revision">
+                                    Revision Requested
+                                </span>
+
+                            {% else %}
+                                <span class="status-badge status-draft">
+                                    Draft
+                                </span>
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- REVIEWED BY -->
+
+                        <td>
+
+                            {% if report.reviewed_by %}
+                                <span class="reviewer-name">
+                                    {{ report.reviewed_by.get_full_name|default:report.reviewed_by.username }}
+                                </span>
+                            {% else %}
+                                <span class="text-muted">
+                                    Not reviewed
+                                </span>
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- SUBMITTED DATE -->
+
+                        <td class="text-nowrap">
+
+                            {% if report.submitted_at %}
+                                {{ report.submitted_at|date:"d M Y" }}
+
+                                <div class="text-muted small">
+                                    {{ report.submitted_at|date:"h:i A" }}
+                                </div>
+                            {% else %}
+                                <span class="text-muted">—</span>
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- VIEW REPORT ACTION -->
+
+                        <td>
+                            <a href="{% url 'daily_reports:admin_report_detail' report.id %}"
+                               class="btn-view-report">
+                                <i class="bi bi-eye"></i>
+                                View Details
+                            </a>
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="8">
+
+                            <div class="empty-state">
+
+                                <div class="empty-icon">
+                                    <i class="bi bi-file-earmark-x"></i>
+                                </div>
+
+                                <h5>No Daily Reports Found</h5>
+
+                                <p>
+                                    No employee reports match your current
+                                    search or filter.
+                                </p>
+
+                            </div>
+
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- PAGINATION -->
+
+    {% if page_obj.has_other_pages %}
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mt-4">
+
+            <div class="pagination-info">
+                Showing {{ page_obj.start_index }}
+                to {{ page_obj.end_index }}
+                of {{ page_obj.paginator.count }} reports
+            </div>
+
+            <nav aria-label="Daily reports pagination">
+
+                <ul class="pagination">
+
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?q={{ search_query|urlencode }}&status={{ selected_status|urlencode }}&page={{ page_obj.previous_page_number }}">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+
+
+                    {% for page_number in page_obj.paginator.page_range %}
+
+                        {% if page_obj.number == page_number %}
+                            <li class="page-item active">
+                                <span class="page-link">
+                                    {{ page_number }}
+                                </span>
+                            </li>
+
+                        {% elif page_number > page_obj.number|add:'-2' and page_number < page_obj.number|add:'2' %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="?q={{ search_query|urlencode }}&status={{ selected_status|urlencode }}&page={{ page_number }}">
+                                    {{ page_number }}
+                                </a>
+                            </li>
+                        {% endif %}
+
+                    {% endfor %}
+
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?q={{ search_query|urlencode }}&status={{ selected_status|urlencode }}&page={{ page_obj.next_page_number }}">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+
+                </ul>
+
+            </nav>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,623 @@
+
+{% extends "admin/base.html" %}
+
+{% block title %}Employee Details{% endblock %}
+
+{% block page_heading %}Employee Details{% endblock %}
+
+{% block employees_active %}active{% endblock %}
+
+{% block extra_css %}
+
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 25px;
+    }
+
+    .page-header h2 {
+        font-size: 25px;
+        font-weight: 800;
+        margin-bottom: 7px;
+    }
+
+    .page-header p {
+        font-size: 13px;
+        color: var(--text-muted);
+        margin: 0;
+    }
+
+    .btn-primary-custom,
+    .btn-secondary-custom {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 17px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: 0.2s ease;
+    }
+
+    .btn-primary-custom {
+        background: var(--primary);
+        color: #fff;
+        border: 1px solid var(--primary);
+    }
+
+    .btn-primary-custom:hover {
+        background: var(--primary-dark);
+        color: #fff;
+    }
+
+    .btn-secondary-custom {
+        background: #fff;
+        color: #64748b;
+        border: 1px solid var(--border);
+    }
+
+    .btn-secondary-custom:hover {
+        background: #f4f7fb;
+        color: var(--text-dark);
+    }
+
+    .profile-card,
+    .detail-card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 13px;
+        margin-bottom: 22px;
+        overflow: hidden;
+    }
+
+    .profile-card {
+        padding: 27px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .profile-picture {
+        width: 85px;
+        height: 85px;
+        min-width: 85px;
+        border-radius: 50%;
+        background: #eaf0f8;
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+        font-weight: 700;
+        overflow: hidden;
+    }
+
+    .profile-picture img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .profile-info {
+        flex: 1;
+    }
+
+    .profile-info h3 {
+        font-size: 20px;
+        font-weight: 800;
+        margin-bottom: 6px;
+    }
+
+    .profile-info p {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-bottom: 9px;
+    }
+
+    .employee-id-badge {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 6px;
+        background: #eaf0f8;
+        color: var(--primary);
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 7px 12px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .status-active {
+        background: #e8f7ef;
+        color: #198754;
+    }
+
+    .status-inactive {
+        background: #fff1e8;
+        color: #d97706;
+    }
+
+    .status-resigned {
+        background: #fdebec;
+        color: #dc3545;
+    }
+
+    .detail-card-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .detail-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: #eaf0f8;
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+    }
+
+    .detail-card-header h5 {
+        font-size: 15px;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .detail-card-body {
+        padding: 24px;
+    }
+
+    .detail-item {
+        margin-bottom: 23px;
+    }
+
+    .detail-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .detail-label {
+        display: block;
+        color: var(--text-muted);
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 7px;
+    }
+
+    .detail-value {
+        color: var(--text-dark);
+        font-size: 13px;
+        font-weight: 600;
+        overflow-wrap: anywhere;
+    }
+
+    .action-card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 13px;
+        padding: 22px;
+        margin-bottom: 22px;
+    }
+
+    .action-card h5 {
+        font-size: 15px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .action-card p {
+        color: var(--text-muted);
+        font-size: 11px;
+        line-height: 1.7;
+        margin-bottom: 17px;
+    }
+
+    .danger-button {
+        width: 100%;
+        background: #fff;
+        border: 1px solid #f1c5c8;
+        color: #dc3545;
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        transition: 0.2s ease;
+    }
+
+    .danger-button:hover {
+        background: #fff1f2;
+    }
+
+    @media (max-width: 575px) {
+        .page-header h2 {
+            font-size: 21px;
+        }
+
+        .page-header > div:last-child {
+            width: 100%;
+            display: flex;
+        }
+
+        .page-header .btn-primary-custom {
+            flex: 1;
+        }
+
+        .profile-card {
+            padding: 20px;
+        }
+
+        .detail-card-body {
+            padding: 19px;
+        }
+    }
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<!-- PAGE HEADER -->
+
+<div class="page-header">
+
+    <div>
+        <h2>Employee Details</h2>
+        <p>View and manage employee information.</p>
+    </div>
+
+    <div class="d-flex gap-2 flex-wrap">
+
+        <a href="{% url 'employees:employee_list' %}"
+           class="btn-secondary-custom">
+
+            <i class="bi bi-arrow-left"></i>
+            Back
+
+        </a>
+
+        <a href="{% url 'employees:employee_update' employee.pk %}"
+           class="btn-primary-custom">
+
+            <i class="bi bi-pencil-square"></i>
+            Edit Employee
+
+        </a>
+
+    </div>
+
+</div>
+
+
+<!-- MESSAGES -->
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show"
+             role="alert">
+
+            {{ message }}
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Close"></button>
+
+        </div>
+    {% endfor %}
+{% endif %}
+
+
+<!-- EMPLOYEE PROFILE -->
+
+<div class="profile-card">
+
+    <div class="profile-picture">
+
+        {% if employee.user.profile_picture %}
+
+            <img src="{{ employee.user.profile_picture.url }}"
+                 alt="{{ employee.user.get_full_name|default:employee.user.username }}">
+
+        {% else %}
+
+            {{ employee.user.first_name|default:employee.user.username|first|upper }}
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="profile-info">
+
+        <h3>
+            {{ employee.user.get_full_name|default:employee.user.username }}
+        </h3>
+
+        <p>
+            {{ employee.designation }} · {{ employee.department }}
+        </p>
+
+        <span class="employee-id-badge">
+            {{ employee.employee_id }}
+        </span>
+
+    </div>
+
+
+    <div>
+
+        {% if employee.employment_status == 'RESIGNED' %}
+
+            <span class="status-badge status-resigned">
+                Resigned
+            </span>
+
+        {% elif employee.user.is_active and employee.employment_status == 'ACTIVE' %}
+
+            <span class="status-badge status-active">
+                Active
+            </span>
+
+        {% else %}
+
+            <span class="status-badge status-inactive">
+                Inactive
+            </span>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<div class="row g-3">
+
+    <!-- ACCOUNT DETAILS -->
+
+    <div class="col-12 col-lg-6">
+
+        <div class="detail-card">
+
+            <div class="detail-card-header">
+
+                <div class="detail-icon">
+                    <i class="bi bi-person-lock"></i>
+                </div>
+
+                <h5>Account Information</h5>
+
+            </div>
+
+
+            <div class="detail-card-body">
+
+                <div class="row">
+
+                    <div class="col-6 detail-item">
+                        <span class="detail-label">Username</span>
+                        <div class="detail-value">{{ employee.user.username }}</div>
+                    </div>
+
+                    <div class="col-6 detail-item">
+                        <span class="detail-label">Role</span>
+                        <div class="detail-value">{{ employee.user.get_role_display }}</div>
+                    </div>
+
+                    <div class="col-12 detail-item">
+                        <span class="detail-label">Email Address</span>
+                        <div class="detail-value">{{ employee.user.email }}</div>
+                    </div>
+
+                    <div class="col-6 detail-item">
+                        <span class="detail-label">First Name</span>
+                        <div class="detail-value">{{ employee.user.first_name|default:"Not provided" }}</div>
+                    </div>
+
+                    <div class="col-6 detail-item">
+                        <span class="detail-label">Last Name</span>
+                        <div class="detail-value">{{ employee.user.last_name|default:"Not provided" }}</div>
+                    </div>
+
+                    <div class="col-12 detail-item">
+                        <span class="detail-label">Phone Number</span>
+                        <div class="detail-value">{{ employee.user.phone|default:"Not provided" }}</div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- EMPLOYMENT DETAILS -->
+
+    <div class="col-12 col-lg-6">
+
+        <div class="detail-card">
+
+            <div class="detail-card-header">
+
+                <div class="detail-icon">
+                    <i class="bi bi-briefcase"></i>
+                </div>
+
+                <h5>Employment Information</h5>
+
+            </div>
+
+
+            <div class="detail-card-body">
+
+                <div class="row">
+
+                    <div class="col-6 detail-item">
+                        <span class="detail-label">Employee ID</span>
+                        <div class="detail-value">{{ employee.employee_id }}</div>
+                    </div>
+
+                    <div class="col-6 detail-item">
+                        <span class="detail-label">Department</span>
+                        <div class="detail-value">{{ employee.department }}</div>
+                    </div>
+
+                    <div class="col-6 detail-item">
+                        <span class="detail-label">Designation</span>
+                        <div class="detail-value">{{ employee.designation }}</div>
+                    </div>
+
+                    <div class="col-6 detail-item">
+                        <span class="detail-label">Manager</span>
+                        <div class="detail-value">
+                            {% if employee.manager %}
+                                {{ employee.manager.get_full_name|default:employee.manager.username }}
+                            {% else %}
+                                Not assigned
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="col-6 detail-item">
+                        <span class="detail-label">Date of Joining</span>
+                        <div class="detail-value">
+                            {{ employee.date_of_joining|date:"d M Y"|default:"Not provided" }}
+                        </div>
+                    </div>
+
+                    <div class="col-6 detail-item">
+                        <span class="detail-label">Employment Status</span>
+                        <div class="detail-value">{{ employee.get_employment_status_display }}</div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- PERSONAL DETAILS -->
+
+    <div class="col-12 col-lg-6">
+
+        <div class="detail-card">
+
+            <div class="detail-card-header">
+
+                <div class="detail-icon">
+                    <i class="bi bi-person-vcard"></i>
+                </div>
+
+                <h5>Personal Information</h5>
+
+            </div>
+
+
+            <div class="detail-card-body">
+
+                <div class="row">
+
+                    <div class="col-6 detail-item">
+                        <span class="detail-label">Gender</span>
+                        <div class="detail-value">
+                            {{ employee.get_gender_display|default:"Not provided" }}
+                        </div>
+                    </div>
+
+                    <div class="col-6 detail-item">
+                        <span class="detail-label">Date of Birth</span>
+                        <div class="detail-value">
+                            {{ employee.date_of_birth|date:"d M Y"|default:"Not provided" }}
+                        </div>
+                    </div>
+
+                    <div class="col-12 detail-item">
+                        <span class="detail-label">Address</span>
+                        <div class="detail-value">
+                            {{ employee.address|default:"Not provided"|linebreaksbr }}
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ACCOUNT ACTIONS -->
+
+    <div class="col-12 col-lg-6">
+
+        <div class="action-card">
+
+            <h5>Account Actions</h5>
+
+            <p>
+                {% if employee.employment_status == 'RESIGNED' %}
+                    This employee has resigned. Account activation is disabled.
+                {% elif employee.user.is_active %}
+                    Deactivate this employee's account to prevent them from logging in.
+                {% else %}
+                    Reactivate this employee's account to allow them to log in again.
+                {% endif %}
+            </p>
+
+
+            {% if employee.employment_status != 'RESIGNED' %}
+
+                <form method="POST"
+                      action="{% url 'employees:employee_toggle_status' employee.pk %}"
+                      onsubmit="return confirm('Are you sure you want to change this employee account status?');">
+
+                    {% csrf_token %}
+
+                    <button type="submit" class="danger-button">
+
+                        {% if employee.user.is_active %}
+                            <i class="bi bi-person-x me-1"></i>
+                            Deactivate Employee
+                        {% else %}
+                            <i class="bi bi-person-check me-1"></i>
+                            Activate Employee
+                        {% endif %}
+
+                    </button>
+
+                </form>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,528 @@
+
+{% extends "employee/base.html" %}
+
+{% block title %}My Profile | Task Closer{% endblock %}
+
+{% block page_heading %}My Profile{% endblock %}
+
+{% block profile_active %}active{% endblock %}
+
+{% block extra_css %}
+
+/* ==========================================
+   PROFILE PAGE
+========================================== */
+
+.profile-welcome {
+    margin-bottom: 28px;
+}
+
+.profile-welcome h3 {
+    font-size: 23px;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-bottom: 7px;
+}
+
+.profile-welcome p {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin: 0;
+}
+
+.profile-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 15px rgba(20, 40, 70, .035);
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+}
+
+.profile-photo {
+    width: 105px;
+    height: 105px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #eaf0f8;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    font-weight: 800;
+    flex-shrink: 0;
+    border: 4px solid #f2f5fa;
+}
+
+.profile-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-header-info h4 {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 5px;
+}
+
+.profile-header-info p {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.profile-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    background: #e9f8ef;
+    color: #198754;
+}
+
+.profile-section-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-bottom: 20px;
+    padding-bottom: 13px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-section-title i {
+    color: var(--primary);
+    font-size: 18px;
+}
+
+.profile-field {
+    margin-bottom: 20px;
+}
+
+.profile-field label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #53657b;
+    margin-bottom: 8px;
+}
+
+.profile-field .form-control,
+.profile-field .form-select {
+    min-height: 44px;
+    border: 1px solid #e1e7ef;
+    border-radius: 8px;
+    font-size: 13px;
+    padding: 10px 12px;
+    box-shadow: none;
+}
+
+.profile-field textarea.form-control {
+    min-height: 95px;
+}
+
+.profile-field .form-control:focus,
+.profile-field .form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(35, 75, 120, .08);
+}
+
+.profile-field .form-control:disabled {
+    background: #f5f7fa;
+    color: #718096;
+}
+
+.profile-field small {
+    color: var(--text-muted);
+    font-size: 11px;
+}
+
+.readonly-value {
+    background: #f5f7fa;
+    border: 1px solid #e8edf4;
+    padding: 12px 13px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #52647b;
+    min-height: 43px;
+    overflow-wrap: anywhere;
+}
+
+.profile-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border);
+}
+
+.btn-profile-save {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    padding: 11px 22px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.btn-profile-save:hover {
+    background: var(--primary-dark);
+    color: #fff;
+}
+
+.btn-profile-reset {
+    background: #f1f4f8;
+    color: #52647b;
+    border: 1px solid #e3e9f1;
+    padding: 11px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.field-error {
+    color: #dc3545;
+    font-size: 11px;
+    margin-top: 6px;
+}
+
+.status-inactive {
+    background: #fff0f0;
+    color: #dc3545;
+}
+
+.status-resigned {
+    background: #f1f1f1;
+    color: #666;
+}
+
+@media (max-width: 767px) {
+
+    .profile-card {
+        padding: 19px;
+    }
+
+    .profile-header {
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .profile-photo {
+        width: 78px;
+        height: 78px;
+        font-size: 28px;
+    }
+
+    .profile-header-info h4 {
+        font-size: 17px;
+    }
+
+    .profile-welcome h3 {
+        font-size: 20px;
+    }
+
+    .profile-actions {
+        flex-direction: column-reverse;
+    }
+
+    .profile-actions button,
+    .profile-actions a {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+{% endblock %}
+
+
+{% block content %}
+
+<!-- PAGE INTRODUCTION -->
+
+<div class="profile-welcome">
+    <h3>My Profile</h3>
+    <p>Manage your personal information and view your employment details.</p>
+</div>
+
+
+<!-- PROFILE OVERVIEW -->
+
+<div class="profile-card">
+
+    <div class="profile-header">
+
+        <div class="profile-photo">
+
+            {% if request.user.profile_picture %}
+                <img src="{{ request.user.profile_picture.url }}"
+                     alt="Employee profile picture">
+            {% else %}
+                {{ request.user.first_name|first|upper|default:request.user.username|first|upper }}
+            {% endif %}
+
+        </div>
+
+        <div class="profile-header-info">
+
+            <h4>
+                {{ request.user.get_full_name|default:request.user.username }}
+            </h4>
+
+            <p>
+                {{ employee.designation }} |
+                {{ employee.department }}
+            </p>
+
+            {% if employee.employment_status == 'ACTIVE' %}
+                <span class="profile-status">
+                    <i class="bi bi-check-circle me-1"></i>
+                    Active Employee
+                </span>
+            {% elif employee.employment_status == 'INACTIVE' %}
+                <span class="profile-status status-inactive">
+                    Inactive Employee
+                </span>
+            {% else %}
+                <span class="profile-status status-resigned">
+                    Resigned
+                </span>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<form method="POST"
+      enctype="multipart/form-data">
+
+    {% csrf_token %}
+
+
+    <!-- PERSONAL INFORMATION -->
+
+    <div class="profile-card">
+
+        <h5 class="profile-section-title">
+            <i class="bi bi-person-vcard"></i>
+            Personal Information
+        </h5>
+
+        <div class="row">
+
+            <div class="col-md-6">
+                <div class="profile-field">
+                    <label>First Name</label>
+                    {{ form.first_name }}
+                    {% for error in form.first_name.errors %}
+                        <div class="field-error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="profile-field">
+                    <label>Last Name</label>
+                    {{ form.last_name }}
+                    {% for error in form.last_name.errors %}
+                        <div class="field-error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="profile-field">
+                    <label>Email Address</label>
+                    {{ form.email }}
+                    {% for error in form.email.errors %}
+                        <div class="field-error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="profile-field">
+                    <label>Phone Number</label>
+                    {{ form.phone }}
+                    {% for error in form.phone.errors %}
+                        <div class="field-error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="profile-field">
+                    <label>Gender</label>
+                    {{ form.gender }}
+                    {% for error in form.gender.errors %}
+                        <div class="field-error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="profile-field">
+                    <label>Date of Birth</label>
+                    {{ form.date_of_birth }}
+                    {% for error in form.date_of_birth.errors %}
+                        <div class="field-error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="profile-field">
+                    <label>Residential Address</label>
+                    {{ form.address }}
+                    {% for error in form.address.errors %}
+                        <div class="field-error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- PROFILE PICTURE -->
+
+    <div class="profile-card">
+
+        <h5 class="profile-section-title">
+            <i class="bi bi-camera"></i>
+            Profile Picture
+        </h5>
+
+        <div class="profile-field">
+
+            <label>Upload Profile Picture</label>
+
+            {{ form.profile_picture }}
+
+            <small>
+                Choose a new image to update your profile picture.
+                You can use the clear option to remove the current picture.
+            </small>
+
+            {% for error in form.profile_picture.errors %}
+                <div class="field-error">{{ error }}</div>
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+
+    <!-- EMPLOYMENT INFORMATION -->
+
+    <div class="profile-card">
+
+        <h5 class="profile-section-title">
+            <i class="bi bi-briefcase"></i>
+            Employment Information
+        </h5>
+
+        <div class="row">
+
+            <div class="col-md-6">
+                <div class="profile-field">
+                    <label>Employee ID</label>
+                    <div class="readonly-value">
+                        {{ employee.employee_id }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="profile-field">
+                    <label>Department</label>
+                    <div class="readonly-value">
+                        {{ employee.department }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="profile-field">
+                    <label>Designation</label>
+                    <div class="readonly-value">
+                        {{ employee.designation }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="profile-field">
+                    <label>Reporting Manager</label>
+                    <div class="readonly-value">
+
+                        {% if employee.manager %}
+                            {{ employee.manager.get_full_name|default:employee.manager.username }}
+                        {% else %}
+                            Not Assigned
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="profile-field">
+                    <label>Date of Joining</label>
+                    <div class="readonly-value">
+                        {{ employee.date_of_joining|date:"d M Y"|default:"Not Provided" }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="profile-field">
+                    <label>Employment Status</label>
+                    <div class="readonly-value">
+                        {{ employee.get_employment_status_display }}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- FORM ACTIONS -->
+
+    <div class="profile-actions mb-4">
+
+        <a href="{% url 'dashboard:employee_dashboard' %}"
+           class="btn-profile-reset">
+            <i class="bi bi-arrow-left me-1"></i>
+            Back to Dashboard
+        </a>
+
+        <button type="submit" class="btn-profile-save">
+            <i class="bi bi-check2-circle me-1"></i>
+            Save Profile Changes
+        </button>
+
+    </div>
+
+</form>
+
+{% endblock %}

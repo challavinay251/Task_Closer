@@ -1,0 +1,864 @@
+
+{% extends "admin/base.html" %}
+
+{% block title %}Analytics | Task Closer{% endblock %}
+{% block page_heading %}Analytics & Performance{% endblock %}
+{% block analytics_active %}active{% endblock %}
+
+{% block extra_style %}
+<style>
+    .analytics-welcome {
+        background: linear-gradient(135deg, #172554, #1e40af);
+        color: #fff;
+        border-radius: 18px;
+        padding: 27px;
+        margin-bottom: 25px;
+    }
+
+    .analytics-welcome h2 {
+        font-size: 24px;
+        font-weight: 750;
+        margin-bottom: 8px;
+    }
+
+    .analytics-welcome p {
+        margin: 0;
+        color: rgba(255,255,255,.82);
+        font-size: 13px;
+    }
+
+    .analytics-section {
+        margin-bottom: 28px;
+    }
+
+    .section-heading {
+        margin-bottom: 16px;
+    }
+
+    .section-heading h3 {
+        font-size: 18px;
+        font-weight: 750;
+        color: #172554;
+        margin-bottom: 5px;
+    }
+
+    .section-heading p {
+        font-size: 12px;
+        color: #64748b;
+        margin: 0;
+    }
+
+    .analytics-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 15px;
+    }
+
+    .analytics-card {
+        background: #fff;
+        border: 1px solid #e8edf5;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(15,23,42,.035);
+        height: 100%;
+    }
+
+    .analytics-card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 16px;
+    }
+
+    .analytics-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #64748b;
+    }
+
+    .analytics-icon {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 11px;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+
+    .icon-blue {
+        background: #eff6ff;
+        color: #2563eb;
+    }
+
+    .icon-green {
+        background: #ecfdf5;
+        color: #059669;
+    }
+
+    .icon-orange {
+        background: #fff7ed;
+        color: #ea580c;
+    }
+
+    .icon-purple {
+        background: #f5f3ff;
+        color: #7c3aed;
+    }
+
+    .icon-red {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+
+    .analytics-value {
+        font-size: 28px;
+        font-weight: 800;
+        color: #172554;
+        line-height: 1.2;
+    }
+
+    .analytics-description {
+        font-size: 11px;
+        color: #94a3b8;
+        margin-top: 7px;
+    }
+
+    .analytics-panel {
+        background: #fff;
+        border: 1px solid #e8edf5;
+        border-radius: 16px;
+        padding: 22px;
+        box-shadow: 0 4px 15px rgba(15,23,42,.035);
+        height: 100%;
+        min-width: 0;
+    }
+
+    .panel-heading {
+        margin-bottom: 20px;
+    }
+
+    .panel-heading h4 {
+        font-size: 15px;
+        font-weight: 750;
+        color: #172554;
+        margin-bottom: 5px;
+    }
+
+    .panel-heading p {
+        font-size: 11px;
+        color: #94a3b8;
+        margin: 0;
+    }
+
+    .analytics-chart {
+        height: 280px;
+        position: relative;
+        width: 100%;
+    }
+
+    .analytics-two-column {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .performance-highlight {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 17px;
+        border: 1px solid #e8edf5;
+        border-radius: 12px;
+        margin-bottom: 13px;
+    }
+
+    .performance-highlight:last-child {
+        margin-bottom: 0;
+    }
+
+    .performance-highlight span {
+        font-size: 12px;
+        color: #64748b;
+    }
+
+    .performance-highlight strong {
+        font-size: 20px;
+        color: #172554;
+    }
+
+    .analytics-table-wrapper {
+        overflow-x: auto;
+    }
+
+    .analytics-table {
+        width: 100%;
+        border-collapse: collapse;
+        white-space: nowrap;
+    }
+
+    .analytics-table th {
+        background: #f8fafc;
+        padding: 13px;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 700;
+        text-align: left;
+        border-bottom: 1px solid #e8edf5;
+    }
+
+    .analytics-table td {
+        padding: 14px 13px;
+        font-size: 12px;
+        color: #334155;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .analytics-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .employee-name {
+        font-weight: 700;
+        color: #172554;
+    }
+
+    .employee-email {
+        display: block;
+        color: #94a3b8;
+        font-size: 10px;
+        margin-top: 3px;
+    }
+
+    .progress-value {
+        display: flex;
+        justify-content: space-between;
+        font-size: 10px;
+        color: #64748b;
+        margin-bottom: 6px;
+    }
+
+    .progress-track {
+        width: 110px;
+        height: 6px;
+        background: #e2e8f0;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: #2563eb;
+        border-radius: 10px;
+    }
+
+    .analytics-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 9px;
+        border-radius: 30px;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .badge-active {
+        background: #ecfdf5;
+        color: #047857;
+    }
+
+    .badge-inactive {
+        background: #f1f5f9;
+        color: #64748b;
+    }
+
+    .empty-analytics {
+        text-align: center;
+        padding: 30px 15px;
+        color: #94a3b8;
+        font-size: 12px;
+    }
+
+    .empty-analytics i {
+        display: block;
+        font-size: 26px;
+        margin-bottom: 10px;
+    }
+
+    .analytics-period {
+        font-size: 11px;
+        color: #94a3b8;
+        margin-top: 15px;
+    }
+
+    @media (max-width: 1100px) {
+        .analytics-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 768px) {
+        .analytics-two-column {
+            grid-template-columns: 1fr;
+        }
+
+        .analytics-welcome {
+            padding: 22px;
+        }
+
+        .analytics-welcome h2 {
+            font-size: 21px;
+        }
+
+        .analytics-panel {
+            padding: 17px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .analytics-grid {
+            gap: 10px;
+        }
+
+        .analytics-card {
+            padding: 14px;
+        }
+
+        .analytics-value {
+            font-size: 23px;
+        }
+
+        .analytics-label {
+            font-size: 11px;
+        }
+
+        .analytics-icon {
+            width: 34px;
+            height: 34px;
+            font-size: 15px;
+        }
+
+        .analytics-chart {
+            height: 250px;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<!-- Welcome -->
+<section class="analytics-welcome">
+    <h2>Analytics & Performance Overview</h2>
+    <p>
+        Get a detailed overview of employee activity, task performance,
+        priorities, and daily work report submissions.
+    </p>
+    <div class="analytics-period">
+        Reporting period: {{ analytics_start_date|date:"d M Y" }}
+        – {{ analytics_end_date|date:"d M Y" }}
+    </div>
+</section>
+
+
+<!-- Employee Analytics -->
+<section class="analytics-section">
+
+    <div class="section-heading">
+        <h3>Employee Analytics</h3>
+        <p>Overview of employee accounts and availability.</p>
+    </div>
+
+    <div class="analytics-grid">
+
+        <div class="analytics-card">
+            <div class="analytics-card-top">
+                <span class="analytics-label">Total Employees</span>
+                <div class="analytics-icon icon-blue">
+                    <i class="bi bi-people"></i>
+                </div>
+            </div>
+            <div class="analytics-value">{{ total_employees }}</div>
+            <div class="analytics-description">Registered employee profiles</div>
+        </div>
+
+        <div class="analytics-card">
+            <div class="analytics-card-top">
+                <span class="analytics-label">Active Employees</span>
+                <div class="analytics-icon icon-green">
+                    <i class="bi bi-person-check"></i>
+                </div>
+            </div>
+            <div class="analytics-value">{{ active_employees }}</div>
+            <div class="analytics-description">Currently active employees</div>
+        </div>
+
+        <div class="analytics-card">
+            <div class="analytics-card-top">
+                <span class="analytics-label">Inactive / Resigned</span>
+                <div class="analytics-icon icon-orange">
+                    <i class="bi bi-person-dash"></i>
+                </div>
+            </div>
+            <div class="analytics-value">{{ inactive_employees }}</div>
+            <div class="analytics-description">Not currently active</div>
+        </div>
+
+        <div class="analytics-card">
+            <div class="analytics-card-top">
+                <span class="analytics-label">Employee Active Rate</span>
+                <div class="analytics-icon icon-purple">
+                    <i class="bi bi-graph-up-arrow"></i>
+                </div>
+            </div>
+            <div class="analytics-value">
+                {% widthratio active_employees total_employees 100 %}%
+            </div>
+            <div class="analytics-description">Active employees out of total</div>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- Task Analytics -->
+<section class="analytics-section">
+
+    <div class="section-heading">
+        <h3>Task Analytics</h3>
+        <p>Task status, completion, and overdue performance.</p>
+    </div>
+
+    <div class="analytics-grid">
+
+        <div class="analytics-card">
+            <div class="analytics-card-top">
+                <span class="analytics-label">Total Tasks</span>
+                <div class="analytics-icon icon-blue">
+                    <i class="bi bi-list-task"></i>
+                </div>
+            </div>
+            <div class="analytics-value">{{ total_tasks }}</div>
+            <div class="analytics-description">All assigned tasks</div>
+        </div>
+
+        <div class="analytics-card">
+            <div class="analytics-card-top">
+                <span class="analytics-label">Pending Tasks</span>
+                <div class="analytics-icon icon-orange">
+                    <i class="bi bi-hourglass-split"></i>
+                </div>
+            </div>
+            <div class="analytics-value">{{ pending_tasks }}</div>
+            <div class="analytics-description">Waiting to start</div>
+        </div>
+
+        <div class="analytics-card">
+            <div class="analytics-card-top">
+                <span class="analytics-label">In Progress</span>
+                <div class="analytics-icon icon-blue">
+                    <i class="bi bi-arrow-repeat"></i>
+                </div>
+            </div>
+            <div class="analytics-value">{{ in_progress_tasks }}</div>
+            <div class="analytics-description">Currently being worked on</div>
+        </div>
+
+        <div class="analytics-card">
+            <div class="analytics-card-top">
+                <span class="analytics-label">Completed Tasks</span>
+                <div class="analytics-icon icon-green">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+            </div>
+            <div class="analytics-value">{{ completed_tasks }}</div>
+            <div class="analytics-description">Successfully completed</div>
+        </div>
+
+        <div class="analytics-card">
+            <div class="analytics-card-top">
+                <span class="analytics-label">On Hold</span>
+                <div class="analytics-icon icon-purple">
+                    <i class="bi bi-pause-circle"></i>
+                </div>
+            </div>
+            <div class="analytics-value">{{ on_hold_tasks }}</div>
+            <div class="analytics-description">Temporarily paused tasks</div>
+        </div>
+
+        <div class="analytics-card">
+            <div class="analytics-card-top">
+                <span class="analytics-label">Overdue Tasks</span>
+                <div class="analytics-icon icon-red">
+                    <i class="bi bi-calendar-x"></i>
+                </div>
+            </div>
+            <div class="analytics-value">{{ overdue_tasks }}</div>
+            <div class="analytics-description">Past due date and not completed</div>
+        </div>
+
+        <div class="analytics-card">
+            <div class="analytics-card-top">
+                <span class="analytics-label">Average Progress</span>
+                <div class="analytics-icon icon-purple">
+                    <i class="bi bi-speedometer2"></i>
+                </div>
+            </div>
+            <div class="analytics-value">{{ average_task_progress }}%</div>
+            <div class="analytics-description">Average progress of all tasks</div>
+        </div>
+
+        <div class="analytics-card">
+            <div class="analytics-card-top">
+                <span class="analytics-label">Completion Rate</span>
+                <div class="analytics-icon icon-green">
+                    <i class="bi bi-trophy"></i>
+                </div>
+            </div>
+            <div class="analytics-value">{{ completion_rate }}%</div>
+            <div class="analytics-description">Completed tasks out of total</div>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- Task Charts -->
+<section class="analytics-section">
+
+    <div class="analytics-two-column">
+
+        <div class="analytics-panel">
+            <div class="panel-heading">
+                <h4>Task Status Distribution</h4>
+                <p>Breakdown of tasks by current status.</p>
+            </div>
+
+            <div class="analytics-chart">
+                <canvas id="taskStatusChart"></canvas>
+            </div>
+        </div>
+
+        <div class="analytics-panel">
+            <div class="panel-heading">
+                <h4>Task Priority Distribution</h4>
+                <p>Understand the priority levels of assigned tasks.</p>
+            </div>
+
+            <div class="analytics-chart">
+                <canvas id="taskPriorityChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- Employee Performance -->
+<section class="analytics-section">
+
+    <div class="section-heading">
+        <h3>Employee Performance</h3>
+        <p>Individual task assignments and completion progress.</p>
+    </div>
+
+    <div class="analytics-panel">
+
+        <div class="analytics-table-wrapper">
+            <table class="analytics-table">
+
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Total Tasks</th>
+                        <th>Completed</th>
+                        <th>Average Progress</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for item in employee_performance %}
+                    <tr>
+                        <td>
+                            <span class="employee-name">
+                                {{ item.user.get_full_name|default:item.user.username }}
+                            </span>
+                            <span class="employee-email">
+                                {{ item.user.email }}
+                            </span>
+                        </td>
+
+                        <td>{{ item.total_assigned_tasks }}</td>
+
+                        <td>{{ item.completed_assigned_tasks }}</td>
+
+                        <td>
+                            {% with progress=item.average_progress|default:0 %}
+                            <div class="progress-value">
+                                <span>Progress</span>
+                                <strong>{{ progress|floatformat:0 }}%</strong>
+                            </div>
+
+                            <div class="progress-track">
+                                <div class="progress-fill"
+                                     style="width: {{ progress }}%;">
+                                </div>
+                            </div>
+                            {% endwith %}
+                        </td>
+                    </tr>
+
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">
+                            <div class="empty-analytics">
+                                <i class="bi bi-people"></i>
+                                No employee performance data available.
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- Daily Report Analytics -->
+<section class="analytics-section">
+
+    <div class="section-heading">
+        <h3>Daily Report Analytics</h3>
+        <p>Overview of employee daily report submissions and reviews.</p>
+    </div>
+
+    <div class="analytics-grid">
+
+        <div class="analytics-card">
+            <div class="analytics-card-top">
+                <span class="analytics-label">Total Reports</span>
+                <div class="analytics-icon icon-blue">
+                    <i class="bi bi-file-earmark-text"></i>
+                </div>
+            </div>
+            <div class="analytics-value">{{ total_reports }}</div>
+            <div class="analytics-description">All daily reports</div>
+        </div>
+
+        <div class="analytics-card">
+            <div class="analytics-card-top">
+                <span class="analytics-label">Submitted</span>
+                <div class="analytics-icon icon-orange">
+                    <i class="bi bi-send"></i>
+                </div>
+            </div>
+            <div class="analytics-value">{{ submitted_reports }}</div>
+            <div class="analytics-description">Awaiting admin review</div>
+        </div>
+
+        <div class="analytics-card">
+            <div class="analytics-card-top">
+                <span class="analytics-label">Approved</span>
+                <div class="analytics-icon icon-green">
+                    <i class="bi bi-patch-check"></i>
+                </div>
+            </div>
+            <div class="analytics-value">{{ approved_reports }}</div>
+            <div class="analytics-description">Reports approved</div>
+        </div>
+
+        <div class="analytics-card">
+            <div class="analytics-card-top">
+                <span class="analytics-label">Rejected</span>
+                <div class="analytics-icon icon-red">
+                    <i class="bi bi-x-circle"></i>
+                </div>
+            </div>
+            <div class="analytics-value">{{ rejected_reports }}</div>
+            <div class="analytics-description">Reports rejected</div>
+        </div>
+
+        <div class="analytics-card">
+            <div class="analytics-card-top">
+                <span class="analytics-label">Revision Required</span>
+                <div class="analytics-icon icon-purple">
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                </div>
+            </div>
+            <div class="analytics-value">{{ revision_reports }}</div>
+            <div class="analytics-description">Reports awaiting updates</div>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- Report Trends -->
+<section class="analytics-section">
+
+    <div class="analytics-panel">
+        <div class="panel-heading">
+            <h4>Daily Report Submission Trends</h4>
+            <p>Daily reports submitted during the last 30 days.</p>
+        </div>
+
+        <div class="analytics-chart">
+            <canvas id="reportTrendChart"></canvas>
+        </div>
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    // Task Status Chart
+    const statusCanvas = document.getElementById("taskStatusChart");
+
+    if (statusCanvas) {
+        new Chart(statusCanvas, {
+            type: "doughnut",
+            data: {
+                labels: [
+                    "Pending",
+                    "In Progress",
+                    "Completed",
+                    "On Hold"
+                ],
+                datasets: [{
+                    data: [
+                        {{ pending_tasks|default:0 }},
+                        {{ in_progress_tasks|default:0 }},
+                        {{ completed_tasks|default:0 }},
+                        {{ on_hold_tasks|default:0 }}
+                    ],
+                    backgroundColor: [
+                        "#f97316",
+                        "#3b82f6",
+                        "#10b981",
+                        "#8b5cf6"
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 7
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: "65%",
+                plugins: {
+                    legend: {
+                        position: "bottom",
+                        labels: {
+                            usePointStyle: true,
+                            padding: 18,
+                            font: { size: 11 }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+
+    // Task Priority Chart
+    const priorityCanvas = document.getElementById("taskPriorityChart");
+
+    if (priorityCanvas) {
+        new Chart(priorityCanvas, {
+            type: "bar",
+            data: {
+                labels: ["Low", "Medium", "High", "Urgent"],
+                datasets: [{
+                    label: "Number of Tasks",
+                    data: [
+                        {{ low_priority_tasks|default:0 }},
+                        {{ medium_priority_tasks|default:0 }},
+                        {{ high_priority_tasks|default:0 }},
+                        {{ urgent_priority_tasks|default:0 }}
+                    ],
+                    backgroundColor: [
+                        "#94a3b8",
+                        "#3b82f6",
+                        "#f97316",
+                        "#ef4444"
+                    ],
+                    borderRadius: 7,
+                    maxBarThickness: 55
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { precision: 0 }
+                    }
+                }
+            }
+        });
+    }
+
+
+    // Daily Report Trends Chart
+    const trendCanvas = document.getElementById("reportTrendChart");
+
+    if (trendCanvas) {
+        const trendLabels = {{ report_trend_labels|safe }};
+        const trendValues = {{ report_trend_values|safe }};
+
+        new Chart(trendCanvas, {
+            type: "line",
+            data: {
+                labels: trendLabels,
+                datasets: [{
+                    label: "Daily Reports",
+                    data: trendValues,
+                    borderColor: "#2563eb",
+                    backgroundColor: "rgba(37,99,235,.10)",
+                    fill: true,
+                    tension: 0.35,
+                    pointRadius: 3,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: "bottom"
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { precision: 0 }
+                    }
+                }
+            }
+        });
+    }
+
+});
+</script>
+
+{% endblock %}

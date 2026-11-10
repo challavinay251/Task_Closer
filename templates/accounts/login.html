@@ -1,0 +1,612 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login | Task Closer</title>
+
+    <meta name="description"
+          content="Secure login portal for Task Closer employee task management system.">
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+          rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #234b78;
+            --primary-dark: #173653;
+            --background: #f4f7fb;
+            --text-dark: #172b45;
+            --text-muted: #718096;
+            --border: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background: var(--background);
+            color: var(--text-dark);
+        }
+
+        .login-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 35px 18px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 1050px;
+            min-height: 620px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: #fff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 55px rgba(25, 48, 76, 0.09);
+        }
+
+        /* LEFT PANEL */
+
+        .login-banner {
+            background: linear-gradient(
+                145deg,
+                #173653,
+                #234b78,
+                #315e8d
+            );
+            padding: 55px 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-banner::before {
+            content: "";
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 50%;
+            right: -120px;
+            top: 90px;
+        }
+
+        .login-banner::after {
+            content: "";
+            position: absolute;
+            width: 240px;
+            height: 240px;
+            border: 1px solid rgba(255,255,255,0.10);
+            border-radius: 50%;
+            right: -80px;
+            top: 120px;
+        }
+
+        .brand {
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 13px;
+            font-size: 23px;
+            margin-bottom: 18px;
+        }
+
+        .brand h2 {
+            font-size: 27px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+        }
+
+        .brand p {
+            color: rgba(255,255,255,0.7);
+            font-size: 13px;
+            margin: 0;
+        }
+
+        .banner-content {
+            position: relative;
+            z-index: 1;
+            margin: 65px 0;
+        }
+
+        .banner-content h1 {
+            font-size: 34px;
+            font-weight: 800;
+            line-height: 1.35;
+            margin-bottom: 18px;
+            letter-spacing: -1px;
+        }
+
+        .banner-content p {
+            color: rgba(255,255,255,0.75);
+            font-size: 14px;
+            line-height: 1.9;
+            max-width: 360px;
+        }
+
+        .banner-features {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 17px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .feature-item i {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.13);
+            border-radius: 9px;
+            font-size: 15px;
+        }
+
+        /* RIGHT PANEL */
+
+        .login-form-panel {
+            padding: 65px 55px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-heading {
+            margin-bottom: 35px;
+        }
+
+        .login-heading .welcome {
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .login-heading h2 {
+            font-size: 29px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 10px;
+        }
+
+        .login-heading p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 9px;
+        }
+
+        .input-group-custom {
+            position: relative;
+            margin-bottom: 22px;
+        }
+
+        .input-group-custom .form-control {
+            height: 49px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            font-size: 13px;
+            padding: 12px 15px 12px 43px;
+            box-shadow: none;
+        }
+
+        .input-group-custom .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(35,75,120,0.09);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8292a8;
+            z-index: 5;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            color: #8292a8;
+            z-index: 5;
+            cursor: pointer;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary);
+        }
+
+        .password-field {
+            padding-right: 45px !important;
+        }
+
+        .login-button {
+            width: 100%;
+            height: 50px;
+            background: var(--primary);
+            border: none;
+            border-radius: 9px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            transition: 0.25s ease;
+            margin-top: 8px;
+        }
+
+        .login-button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 7px 18px rgba(35,75,120,0.2);
+        }
+
+        .login-footer {
+            margin-top: 35px;
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .error-message {
+            padding: 12px 14px;
+            background: #fff0f0;
+            border: 1px solid #ffdada;
+            border-radius: 8px;
+            color: #c03939;
+            font-size: 12px;
+            margin-bottom: 20px;
+        }
+
+        .field-error {
+            color: #c03939;
+            font-size: 11px;
+            margin-top: 6px;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 767px) {
+
+            .login-wrapper {
+                padding: 20px 13px;
+            }
+
+            .login-container {
+                grid-template-columns: 1fr;
+                max-width: 450px;
+                min-height: auto;
+            }
+
+            .login-banner {
+                padding: 28px 28px;
+                min-height: 210px;
+            }
+
+            .brand-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 19px;
+                margin-bottom: 12px;
+            }
+
+            .brand h2 {
+                font-size: 22px;
+            }
+
+            .banner-content {
+                margin: 25px 0 0;
+            }
+
+            .banner-content h1 {
+                font-size: 23px;
+            }
+
+            .banner-content p {
+                font-size: 12px;
+            }
+
+            .banner-features {
+                display: none;
+            }
+
+            .login-form-panel {
+                padding: 38px 27px;
+            }
+
+            .login-heading h2 {
+                font-size: 25px;
+            }
+        }
+
+        @media (min-width: 768px) and (max-width: 991px) {
+            .login-form-panel {
+                padding: 45px 30px;
+            }
+
+            .login-banner {
+                padding: 45px 30px;
+            }
+
+            .banner-content h1 {
+                font-size: 28px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="login-wrapper">
+
+    <div class="login-container">
+
+        <!-- LEFT BANNER -->
+
+        <div class="login-banner">
+
+            <div class="brand">
+
+                <div class="brand-icon">
+                    <i class="bi bi-check2-square"></i>
+                </div>
+
+                <h2>TASK CLOSER</h2>
+
+                <p>Employee Task Management System</p>
+
+            </div>
+
+
+            <div class="banner-content">
+
+                <h1>
+                    Manage Your Work.<br>
+                    Achieve More.
+                </h1>
+
+                <p>
+                    A centralized workspace to manage tasks,
+                    monitor progress, report daily activities,
+                    and achieve your goals efficiently.
+                </p>
+
+            </div>
+
+
+            <div class="banner-features">
+
+                <div class="feature-item">
+                    <i class="bi bi-list-check"></i>
+                    <span>Organized Task Management</span>
+                </div>
+
+                <div class="feature-item">
+                    <i class="bi bi-graph-up-arrow"></i>
+                    <span>Real-Time Progress Tracking</span>
+                </div>
+
+                <div class="feature-item">
+                    <i class="bi bi-shield-check"></i>
+                    <span>Secure Employee Workspace</span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- LOGIN FORM -->
+
+        <div class="login-form-panel">
+
+            <div class="login-heading">
+
+                <div class="welcome">
+                    Welcome Back
+                </div>
+
+                <h2>Sign In</h2>
+
+                <p>
+                    Enter your credentials to access your workspace.
+                </p>
+
+            </div>
+
+
+            <form method="POST" action="{% url 'accounts:login' %}">
+
+                {% csrf_token %}
+
+
+                {% if form.non_field_errors %}
+
+                    <div class="error-message">
+                        <i class="bi bi-exclamation-circle me-2"></i>
+
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+
+                {% endif %}
+
+
+                <!-- USERNAME -->
+
+                <div class="mb-3">
+
+                    <label for="{{ form.username.id_for_label }}"
+                           class="form-label">
+                        Username
+                    </label>
+
+                    <div class="input-group-custom">
+
+                        <i class="bi bi-person input-icon"></i>
+
+                        {{ form.username }}
+
+                    </div>
+
+                    {% for error in form.username.errors %}
+                        <div class="field-error">{{ error }}</div>
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- PASSWORD -->
+
+                <div class="mb-3">
+
+                    <label for="{{ form.password.id_for_label }}"
+                           class="form-label">
+                        Password
+                    </label>
+
+                    <div class="input-group-custom">
+
+                        <i class="bi bi-lock input-icon"></i>
+
+                        <input
+                            type="password"
+                            name="password"
+                            id="id_password"
+                            class="form-control password-field"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            id="togglePassword"
+                            aria-label="Show password"
+                        >
+                            <i class="bi bi-eye" id="passwordIcon"></i>
+                        </button>
+
+                    </div>
+
+                    {% for error in form.password.errors %}
+                        <div class="field-error">{{ error }}</div>
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- SUBMIT -->
+
+                <button type="submit" class="login-button">
+
+                    Sign In
+
+                    <i class="bi bi-arrow-right ms-2"></i>
+
+                </button>
+
+            </form>
+
+
+            <div class="login-footer">
+
+                <p>
+                    &copy; {% now "Y" %} Task Closer.
+                    All Rights Reserved.
+                </p>
+
+                <p>
+                    Secure Employee Management Platform
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- PASSWORD VISIBILITY -->
+
+<script>
+
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('id_password');
+    const passwordIcon = document.getElementById('passwordIcon');
+
+    togglePassword.addEventListener('click', function () {
+
+        const isPassword = passwordInput.type === 'password';
+
+        passwordInput.type = isPassword ? 'text' : 'password';
+
+        passwordIcon.classList.toggle('bi-eye', !isPassword);
+        passwordIcon.classList.toggle('bi-eye-slash', isPassword);
+
+        togglePassword.setAttribute(
+            'aria-label',
+            isPassword ? 'Hide password' : 'Show password'
+        );
+
+    });
+
+</script>
+
+</body>
+</html>

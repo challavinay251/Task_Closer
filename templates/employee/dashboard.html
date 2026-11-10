@@ -1,0 +1,1271 @@
+
+{% extends "employee/base.html" %}
+
+{% block title %}Employee Dashboard | Task Closer{% endblock %}
+
+{% block page_heading %}Employee Dashboard{% endblock %}
+
+{% block dashboard_active %}active{% endblock %}
+
+
+{% block extra_css %}
+
+/* WELCOME SECTION */
+
+.welcome-section {
+    margin-bottom: 30px;
+}
+
+.welcome-section h2 {
+    font-size: 25px;
+    font-weight: 800;
+    margin-bottom: 9px;
+}
+
+.welcome-section p {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin: 0;
+    line-height: 1.8;
+}
+
+.role-badge {
+    display: inline-block;
+    background: #eaf0f8;
+    color: var(--primary);
+    padding: 7px 12px;
+    border-radius: 7px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-top: 16px;
+}
+
+
+/* DAILY REPORT BANNER */
+
+.report-banner {
+    background: linear-gradient(110deg, #173653, #315e8d);
+    border-radius: 14px;
+    padding: 28px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 32px;
+}
+
+.report-banner h5 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.report-banner p {
+    font-size: 12px;
+    color: rgba(255,255,255,.75);
+    margin: 0;
+    line-height: 1.7;
+}
+
+.report-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    background: #fff;
+    color: var(--primary);
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.report-btn:hover {
+    background: #edf3fa;
+    color: var(--primary-dark);
+}
+
+
+/* SECTION HEADINGS */
+
+.section-heading {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 17px;
+}
+
+
+/* TASK STATISTICS */
+
+.task-summary {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    padding: 23px;
+    height: 100%;
+}
+
+.task-summary-label {
+    color: var(--text-muted);
+    font-size: 11px;
+    margin-bottom: 9px;
+}
+
+.task-summary-number {
+    font-size: 25px;
+    font-weight: 800;
+    color: var(--text-dark);
+}
+
+.task-summary-icon {
+    width: 43px;
+    height: 43px;
+    border-radius: 11px;
+    background: #eaf0f8;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+
+/* OVERALL TASK PROGRESS */
+
+.overall-progress-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    padding: 23px;
+    margin-bottom: 30px;
+}
+
+.overall-progress-card h6 {
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.overall-progress-card .progress {
+    height: 9px;
+    background: #edf1f6;
+    border-radius: 20px;
+}
+
+.overall-progress-card .progress-bar {
+    background: var(--primary);
+    border-radius: 20px;
+}
+
+.progress-caption {
+    color: var(--text-muted);
+    font-size: 10px;
+}
+
+
+/* REPORT STATUS */
+
+.report-status-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    padding: 22px;
+    height: 100%;
+}
+
+.report-status-card h6 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 14px;
+}
+
+.report-status-card p {
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 1.7;
+    margin-bottom: 8px;
+}
+
+.report-status-badge {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 7px;
+    background: #eaf0f8;
+    color: var(--primary);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.report-approved {
+    background: #e8f7ef;
+    color: #198754;
+}
+
+.report-rejected {
+    background: #fdebec;
+    color: #dc3545;
+}
+
+.report-revision {
+    background: #fff5df;
+    color: #b7791f;
+}
+
+.report-submitted {
+    background: #eaf0ff;
+    color: #4169b2;
+}
+
+.report-not-submitted {
+    background: #f0f2f5;
+    color: #65758a;
+}
+
+
+/* WORKSPACE CARDS */
+
+.overview-card {
+    height: 100%;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    padding: 23px;
+    text-decoration: none;
+    display: block;
+    transition: .2s ease;
+}
+
+.overview-card:hover {
+    border-color: #b7c9df;
+    transform: translateY(-2px);
+}
+
+.overview-icon {
+    width: 43px;
+    height: 43px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eaf0f8;
+    color: var(--primary);
+    border-radius: 11px;
+    font-size: 20px;
+    margin-bottom: 19px;
+}
+
+.overview-card h6 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text-dark);
+}
+
+.overview-card p {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin: 0;
+}
+
+
+/* RECENT TASKS AND TODAY'S TASKS */
+
+.recent-task-panel {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    overflow: hidden;
+    margin-top: 30px;
+}
+
+.recent-task-header {
+    padding: 21px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.recent-task-header h5 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.recent-task-header p {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.view-all-link {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.view-all-link:hover {
+    color: var(--primary-dark);
+}
+
+.recent-task-list {
+    padding: 20px 24px;
+}
+
+.recent-task-item {
+    padding: 17px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 13px;
+}
+
+.recent-task-item:last-child {
+    margin-bottom: 0;
+}
+
+.recent-task-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.recent-task-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 7px;
+}
+
+.recent-task-description {
+    color: var(--text-muted);
+    font-size: 11px;
+    line-height: 1.7;
+    margin: 0;
+}
+
+.task-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.priority-badge,
+.status-badge {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.priority-low {
+    background: #edf3fa;
+    color: #55708f;
+}
+
+.priority-medium {
+    background: #eaf0f8;
+    color: #234b78;
+}
+
+.priority-high {
+    background: #fff1df;
+    color: #c77a12;
+}
+
+.priority-urgent {
+    background: #fdebec;
+    color: #dc3545;
+}
+
+.status-pending {
+    background: #fff5df;
+    color: #b7791f;
+}
+
+.status-in-progress {
+    background: #eaf0ff;
+    color: #4169b2;
+}
+
+.status-completed {
+    background: #e8f7ef;
+    color: #198754;
+}
+
+.status-on-hold {
+    background: #f0eafa;
+    color: #7952a0;
+}
+
+.recent-task-meta {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+    color: var(--text-muted);
+    font-size: 10px;
+}
+
+.recent-task-meta strong {
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+.task-progress {
+    margin-top: 15px;
+}
+
+.task-progress-heading {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 7px;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.task-progress .progress {
+    height: 6px;
+    background: #edf1f6;
+    border-radius: 10px;
+}
+
+.task-progress .progress-bar {
+    background: var(--primary);
+    border-radius: 10px;
+}
+
+
+/* EMPTY STATE */
+
+.empty-state {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    padding: 45px 20px;
+    text-align: center;
+}
+
+.empty-state-icon {
+    width: 58px;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eaf0f8;
+    color: var(--primary);
+    border-radius: 15px;
+    font-size: 25px;
+    margin: 0 auto 17px;
+}
+
+.empty-state h6 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.empty-state p {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin: 0;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 575px) {
+
+    .welcome-section h2 {
+        font-size: 21px;
+    }
+
+    .report-banner {
+        padding: 22px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .report-btn {
+        width: 100%;
+    }
+
+    .overview-card,
+    .task-summary,
+    .overall-progress-card,
+    .report-status-card {
+        padding: 19px;
+    }
+
+    .recent-task-header,
+    .recent-task-list {
+        padding: 17px;
+    }
+}
+
+{% endblock %}
+
+
+{% block content %}
+
+<!-- WELCOME SECTION -->
+
+<div class="welcome-section">
+
+    <h2>
+        Welcome back,
+        {{ request.user.first_name|default:request.user.username }}!
+    </h2>
+
+    <p>
+        Stay organized, manage your assigned tasks,
+        and keep your daily work reports updated.
+    </p>
+
+    <span class="role-badge">
+        <i class="bi bi-person-check me-1"></i>
+        EMPLOYEE WORKSPACE
+    </span>
+
+</div>
+
+
+<!-- DAILY REPORT BANNER -->
+
+<div class="report-banner">
+
+    <div>
+
+        <h5>Keep Your Daily Work Updated</h5>
+
+        <p>
+            Submit your daily work summary with image evidence
+            and keep your progress visible to the Admin.
+        </p>
+
+    </div>
+
+    <a href="#" class="report-btn">
+
+        <i class="bi bi-plus-circle"></i>
+        Submit Daily Report
+
+    </a>
+
+</div>
+
+
+<!-- TASK OVERVIEW -->
+
+<h5 class="section-heading">My Task Overview</h5>
+
+<div class="row g-3 mb-4">
+
+    <div class="col-6 col-lg-3">
+
+        <div class="task-summary">
+
+            <div class="task-summary-icon">
+                <i class="bi bi-list-task"></i>
+            </div>
+
+            <div class="task-summary-label">Total Tasks</div>
+
+            <div class="task-summary-number">
+                {{ total_tasks|default:0 }}
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-6 col-lg-3">
+
+        <div class="task-summary">
+
+            <div class="task-summary-icon">
+                <i class="bi bi-hourglass-split"></i>
+            </div>
+
+            <div class="task-summary-label">Pending Tasks</div>
+
+            <div class="task-summary-number">
+                {{ pending_tasks|default:0 }}
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-6 col-lg-3">
+
+        <div class="task-summary">
+
+            <div class="task-summary-icon">
+                <i class="bi bi-arrow-repeat"></i>
+            </div>
+
+            <div class="task-summary-label">In Progress</div>
+
+            <div class="task-summary-number">
+                {{ in_progress_tasks|default:0 }}
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-6 col-lg-3">
+
+        <div class="task-summary">
+
+            <div class="task-summary-icon">
+                <i class="bi bi-check-circle"></i>
+            </div>
+
+            <div class="task-summary-label">Completed Tasks</div>
+
+            <div class="task-summary-number">
+                {{ completed_tasks|default:0 }}
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- OVERALL TASK PROGRESS -->
+
+<div class="overall-progress-card">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <h6>Overall Task Progress</h6>
+
+        <strong>{{ average_task_progress|default:0 }}%</strong>
+
+    </div>
+
+    <div class="progress">
+
+        <div class="progress-bar"
+             role="progressbar"
+             style="width: {{ average_task_progress|default:0 }}%;"
+             aria-valuenow="{{ average_task_progress|default:0 }}"
+             aria-valuemin="0"
+             aria-valuemax="100">
+        </div>
+
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-3">
+
+        <small class="progress-caption">
+            Average completion across your assigned tasks
+        </small>
+
+        <small class="progress-caption">
+            {{ overdue_tasks|default:0 }} overdue
+        </small>
+
+    </div>
+
+</div>
+
+
+<!-- TODAY'S TASKS -->
+
+<div class="recent-task-panel">
+
+    <div class="recent-task-header">
+
+        <div>
+
+            <h5>Today's Assigned Tasks</h5>
+
+            <p>Tasks scheduled for today and their current progress.</p>
+
+        </div>
+
+        <a href="{% url 'tasks:employee_task_list' %}"
+           class="view-all-link">
+
+            View All Tasks
+            <i class="bi bi-arrow-right ms-1"></i>
+
+        </a>
+
+    </div>
+
+
+    {% if todays_tasks %}
+
+        <div class="recent-task-list">
+
+            {% for task in todays_tasks %}
+
+                <div class="recent-task-item">
+
+                    <div class="recent-task-top">
+
+                        <div style="flex: 1; min-width: 180px;">
+
+                            <h6 class="recent-task-title">
+                                {{ task.title }}
+                            </h6>
+
+                            <p class="recent-task-description">
+                                {{ task.description|truncatechars:150 }}
+                            </p>
+
+                        </div>
+
+
+                        <div class="task-badges">
+
+                            <span class="priority-badge priority-{{ task.priority|lower }}">
+                                {{ task.get_priority_display }}
+                            </span>
+
+
+                            {% if task.status == 'PENDING' %}
+
+                                <span class="status-badge status-pending">
+                                    Pending
+                                </span>
+
+                            {% elif task.status == 'IN_PROGRESS' %}
+
+                                <span class="status-badge status-in-progress">
+                                    In Progress
+                                </span>
+
+                            {% elif task.status == 'COMPLETED' %}
+
+                                <span class="status-badge status-completed">
+                                    Completed
+                                </span>
+
+                            {% elif task.status == 'ON_HOLD' %}
+
+                                <span class="status-badge status-on-hold">
+                                    On Hold
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="recent-task-meta">
+
+                        <span>
+                            <i class="bi bi-calendar-event me-1"></i>
+                            Due:
+                            <strong>
+                                {{ task.due_date|date:"d M Y" }}
+                            </strong>
+                        </span>
+
+                        <span>
+                            <i class="bi bi-flag me-1"></i>
+                            Priority:
+                            <strong>
+                                {{ task.get_priority_display }}
+                            </strong>
+                        </span>
+
+                    </div>
+
+
+                    <div class="task-progress">
+
+                        <div class="task-progress-heading">
+
+                            <span>Task Progress</span>
+
+                            <span>{{ task.progress }}%</span>
+
+                        </div>
+
+                        <div class="progress">
+
+                            <div class="progress-bar"
+                                 role="progressbar"
+                                 style="width: {{ task.progress }}%;"
+                                 aria-valuenow="{{ task.progress }}"
+                                 aria-valuemin="0"
+                                 aria-valuemax="100">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-state m-3">
+
+            <div class="empty-state-icon">
+                <i class="bi bi-calendar-check"></i>
+            </div>
+
+            <h6>No Active Tasks Today</h6>
+
+            <p>
+                Your tasks scheduled for today will appear here.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<!-- DAILY REPORT STATUS -->
+
+<h5 class="section-heading mt-4">Daily Report Status</h5>
+
+<div class="row g-3 mb-4">
+
+    <div class="col-12 col-lg-6">
+
+        <div class="report-status-card">
+
+            <h6>Today's Report</h6>
+
+            {% if todays_report %}
+
+                {% if todays_report.status == 'APPROVED' %}
+
+                    <span class="report-status-badge report-approved">
+                        <i class="bi bi-check-circle me-1"></i>
+                        Approved
+                    </span>
+
+                {% elif todays_report.status == 'REJECTED' %}
+
+                    <span class="report-status-badge report-rejected">
+                        <i class="bi bi-x-circle me-1"></i>
+                        Rejected
+                    </span>
+
+                {% elif todays_report.status == 'REVISION' %}
+
+                    <span class="report-status-badge report-revision">
+                        <i class="bi bi-exclamation-circle me-1"></i>
+                        Revision Required
+                    </span>
+
+                {% elif todays_report.status == 'SUBMITTED' %}
+
+                    <span class="report-status-badge report-submitted">
+                        <i class="bi bi-send me-1"></i>
+                        Submitted
+                    </span>
+
+                {% else %}
+
+                    <span class="report-status-badge">
+                        {{ todays_report.get_status_display }}
+                    </span>
+
+                {% endif %}
+
+                <p class="mt-3">
+                    Your daily report for
+                    {{ todays_report.report_date|date:"d M Y" }}
+                    is available.
+                </p>
+
+                {% if todays_report.admin_feedback %}
+
+                    <div class="mt-3">
+
+                        <strong class="small">Admin Feedback</strong>
+
+                        <p class="mt-2">
+                            {{ todays_report.admin_feedback }}
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            {% else %}
+
+                <span class="report-status-badge report-not-submitted">
+                    <i class="bi bi-clock me-1"></i>
+                    Not Submitted
+                </span>
+
+                <p class="mt-3">
+                    You have not submitted today's daily report yet.
+                    Please complete your daily work report.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <div class="col-12 col-lg-6">
+
+        <div class="report-status-card">
+
+            <h6>My Report History</h6>
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <p>Total Reports</p>
+
+                <strong>{{ total_reports|default:0 }}</strong>
+
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <p>Approved Reports</p>
+
+                <strong>{{ approved_reports|default:0 }}</strong>
+
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <p>Revision Required</p>
+
+                <strong>{{ revision_reports|default:0 }}</strong>
+
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-0">
+
+                <p>Rejected Reports</p>
+
+                <strong>{{ rejected_reports|default:0 }}</strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- WORKSPACE -->
+
+<h5 class="section-heading">My Workspace</h5>
+
+<div class="row g-3">
+
+    <div class="col-12 col-md-6 col-xl-4">
+
+        <a href="{% url 'tasks:employee_task_list' %}"
+           class="overview-card">
+
+            <div class="overview-icon">
+                <i class="bi bi-list-check"></i>
+            </div>
+
+            <h6>My Assigned Tasks</h6>
+
+            <p>
+                View your assigned tasks, descriptions,
+                priorities, and deadlines.
+            </p>
+
+        </a>
+
+    </div>
+
+
+    <div class="col-12 col-md-6 col-xl-4">
+
+        <a href="{% url 'tasks:employee_task_list' %}"
+           class="overview-card">
+
+            <div class="overview-icon">
+                <i class="bi bi-clipboard-check"></i>
+            </div>
+
+            <h6>Task Progress</h6>
+
+            <p>
+                View your task status and monitor
+                your ongoing work.
+            </p>
+
+        </a>
+
+    </div>
+
+
+    <div class="col-12 col-md-6 col-xl-4">
+
+        <div class="overview-card">
+
+            <div class="overview-icon">
+                <i class="bi bi-file-earmark-check"></i>
+            </div>
+
+            <h6>Daily Work Reports</h6>
+
+            <p>
+                Submit your daily work entries with
+                mandatory image evidence.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-12 col-md-6 col-xl-4">
+
+        <div class="overview-card">
+
+            <div class="overview-icon">
+                <i class="bi bi-clock-history"></i>
+            </div>
+
+            <h6>Previous Reports</h6>
+
+            <p>
+                Review your previous submissions and
+                track their approval status.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-12 col-md-6 col-xl-4">
+
+        <div class="overview-card">
+
+            <div class="overview-icon">
+                <i class="bi bi-chat-left-text"></i>
+            </div>
+
+            <h6>Admin Feedback</h6>
+
+            <p>
+                View comments and corrections requested
+                by the Admin.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-12 col-md-6 col-xl-4">
+
+        <div class="overview-card">
+
+            <div class="overview-icon">
+                <i class="bi bi-calendar-check"></i>
+            </div>
+
+            <h6>Tomorrow's Work Plan</h6>
+
+            <p>
+                Organize and communicate your upcoming
+                work activities.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- RECENT TASKS -->
+
+<div class="recent-task-panel">
+
+    <div class="recent-task-header">
+
+        <div>
+
+            <h5>My Recent Tasks</h5>
+
+            <p>Your latest tasks assigned by the Admin.</p>
+
+        </div>
+
+        <a href="{% url 'tasks:employee_task_list' %}"
+           class="view-all-link">
+
+            View All Tasks
+            <i class="bi bi-arrow-right ms-1"></i>
+
+        </a>
+
+    </div>
+
+
+    {% if recent_tasks %}
+
+        <div class="recent-task-list">
+
+            {% for task in recent_tasks %}
+
+                <div class="recent-task-item">
+
+                    <div class="recent-task-top">
+
+                        <div style="flex: 1; min-width: 180px;">
+
+                            <h6 class="recent-task-title">
+                                {{ task.title }}
+                            </h6>
+
+                            <p class="recent-task-description">
+                                {{ task.description|truncatechars:160 }}
+                            </p>
+
+                        </div>
+
+
+                        <div class="task-badges">
+
+                            <span class="priority-badge priority-{{ task.priority|lower }}">
+                                {{ task.get_priority_display }}
+                            </span>
+
+
+                            {% if task.status == 'PENDING' %}
+
+                                <span class="status-badge status-pending">
+                                    Pending
+                                </span>
+
+                            {% elif task.status == 'IN_PROGRESS' %}
+
+                                <span class="status-badge status-in-progress">
+                                    In Progress
+                                </span>
+
+                            {% elif task.status == 'COMPLETED' %}
+
+                                <span class="status-badge status-completed">
+                                    Completed
+                                </span>
+
+                            {% elif task.status == 'ON_HOLD' %}
+
+                                <span class="status-badge status-on-hold">
+                                    On Hold
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="recent-task-meta">
+
+                        <span>
+                            <i class="bi bi-calendar-event me-1"></i>
+                            Due:
+                            <strong>
+                                {{ task.due_date|date:"d M Y" }}
+                            </strong>
+                        </span>
+
+                        <span>
+                            <i class="bi bi-calendar-plus me-1"></i>
+                            Assigned:
+                            <strong>
+                                {{ task.created_at|date:"d M Y" }}
+                            </strong>
+                        </span>
+
+                    </div>
+
+
+                    <div class="task-progress">
+
+                        <div class="task-progress-heading">
+
+                            <span>Task Progress</span>
+
+                            <span>{{ task.progress }}%</span>
+
+                        </div>
+
+                        <div class="progress">
+
+                            <div class="progress-bar"
+                                 role="progressbar"
+                                 style="width: {{ task.progress }}%;"
+                                 aria-valuenow="{{ task.progress }}"
+                                 aria-valuemin="0"
+                                 aria-valuemax="100">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-state m-3">
+
+            <div class="empty-state-icon">
+                <i class="bi bi-inbox"></i>
+            </div>
+
+            <h6>No Tasks Assigned Yet</h6>
+
+            <p>
+                Tasks assigned by the Admin will appear
+                here when they are assigned to your account.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

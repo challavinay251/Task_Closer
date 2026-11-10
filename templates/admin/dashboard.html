@@ -1,0 +1,962 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Admin Dashboard | Task Closer{% endblock %}
+{% block page_heading %}Admin Dashboard{% endblock %}
+{% block dashboard_active %}active{% endblock %}
+
+{% block extra_style %}
+<style>
+    .dashboard-welcome {
+        background: linear-gradient(135deg, #172554, #1e40af);
+        color: #fff;
+        border-radius: 18px;
+        padding: 28px;
+        margin-bottom: 25px;
+    }
+
+    .dashboard-welcome h2 {
+        font-size: 25px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .dashboard-welcome p {
+        margin: 0;
+        color: rgba(255,255,255,.82);
+    }
+
+    .dashboard-section {
+        margin-bottom: 28px;
+    }
+
+    .section-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .section-heading h3 {
+        font-size: 18px;
+        font-weight: 700;
+        color: #172554;
+        margin: 0;
+    }
+
+    .section-heading p {
+        font-size: 13px;
+        color: #64748b;
+        margin: 4px 0 0;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .stat-card {
+        background: #fff;
+        border: 1px solid #e8edf5;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(15, 23, 42, .035);
+    }
+
+    .stat-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 17px;
+    }
+
+    .stat-icon {
+        width: 43px;
+        height: 43px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 19px;
+    }
+
+    .icon-blue {
+        background: #eff6ff;
+        color: #2563eb;
+    }
+
+    .icon-green {
+        background: #ecfdf5;
+        color: #059669;
+    }
+
+    .icon-orange {
+        background: #fff7ed;
+        color: #ea580c;
+    }
+
+    .icon-purple {
+        background: #f5f3ff;
+        color: #7c3aed;
+    }
+
+    .icon-red {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+
+    .stat-label {
+        color: #64748b;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .stat-value {
+        color: #172554;
+        font-size: 27px;
+        font-weight: 750;
+        line-height: 1.2;
+    }
+
+    .stat-description {
+        color: #94a3b8;
+        font-size: 12px;
+        margin-top: 7px;
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .dashboard-panel {
+        background: #fff;
+        border: 1px solid #e8edf5;
+        border-radius: 16px;
+        padding: 22px;
+        box-shadow: 0 4px 15px rgba(15, 23, 42, .035);
+        min-width: 0;
+    }
+
+    .chart-container {
+        position: relative;
+        height: 260px;
+        max-width: 100%;
+    }
+
+    .quick-access-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 13px;
+    }
+
+    .quick-access-card {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 15px;
+        border: 1px solid #e8edf5;
+        border-radius: 13px;
+        text-decoration: none;
+        color: #172554;
+        transition: .2s ease;
+        min-width: 0;
+    }
+
+    .quick-access-card:hover {
+        border-color: #93c5fd;
+        background: #f8fbff;
+        color: #1d4ed8;
+        transform: translateY(-2px);
+    }
+
+    .quick-access-icon {
+        width: 42px;
+        height: 42px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 11px;
+        background: #eff6ff;
+        color: #2563eb;
+        font-size: 18px;
+    }
+
+    .quick-access-card h4 {
+        font-size: 14px;
+        font-weight: 700;
+        margin: 0 0 4px;
+    }
+
+    .quick-access-card p {
+        font-size: 12px;
+        color: #64748b;
+        margin: 0;
+    }
+
+    .dashboard-table-wrapper {
+        overflow-x: auto;
+    }
+
+    .dashboard-table {
+        width: 100%;
+        border-collapse: collapse;
+        white-space: nowrap;
+    }
+
+    .dashboard-table th {
+        padding: 12px 14px;
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 700;
+        text-align: left;
+        border-bottom: 1px solid #e8edf5;
+    }
+
+    .dashboard-table td {
+        padding: 14px;
+        color: #334155;
+        font-size: 13px;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .dashboard-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .dashboard-table tbody tr:hover {
+        background: #fafcff;
+    }
+
+    .table-primary-text {
+        color: #172554;
+        font-weight: 650;
+    }
+
+    .table-secondary-text {
+        color: #94a3b8;
+        font-size: 11px;
+        margin-top: 4px;
+    }
+
+    .status-badge,
+    .priority-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 10px;
+        border-radius: 30px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .status-pending {
+        background: #fff7ed;
+        color: #c2410c;
+    }
+
+    .status-in-progress {
+        background: #eff6ff;
+        color: #1d4ed8;
+    }
+
+    .status-completed,
+    .status-approved {
+        background: #ecfdf5;
+        color: #047857;
+    }
+
+    .status-on-hold,
+    .status-revision {
+        background: #f5f3ff;
+        color: #6d28d9;
+    }
+
+    .status-submitted {
+        background: #e0f2fe;
+        color: #0369a1;
+    }
+
+    .status-rejected {
+        background: #fef2f2;
+        color: #b91c1c;
+    }
+
+    .priority-low {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    .priority-medium {
+        background: #eff6ff;
+        color: #1d4ed8;
+    }
+
+    .priority-high {
+        background: #fff7ed;
+        color: #c2410c;
+    }
+
+    .priority-urgent {
+        background: #fef2f2;
+        color: #b91c1c;
+    }
+
+    .progress-info {
+        min-width: 100px;
+    }
+
+    .progress-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        color: #64748b;
+        margin-bottom: 6px;
+    }
+
+    .progress-track {
+        width: 100%;
+        height: 6px;
+        background: #e2e8f0;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: #2563eb;
+        border-radius: 10px;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 30px 15px;
+        color: #94a3b8;
+        font-size: 13px;
+    }
+
+    .empty-state i {
+        display: block;
+        font-size: 27px;
+        margin-bottom: 10px;
+    }
+
+    .dashboard-footer-note {
+        color: #94a3b8;
+        font-size: 12px;
+        margin-top: 18px;
+    }
+
+    @media (max-width: 1100px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .dashboard-welcome {
+            padding: 22px;
+        }
+
+        .dashboard-welcome h2 {
+            font-size: 21px;
+        }
+
+        .dashboard-panel {
+            padding: 17px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .stats-grid {
+            gap: 10px;
+        }
+
+        .stat-card {
+            padding: 14px;
+        }
+
+        .stat-value {
+            font-size: 23px;
+        }
+
+        .stat-icon {
+            width: 37px;
+            height: 37px;
+            font-size: 16px;
+        }
+
+        .quick-access-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<!-- Welcome Section -->
+<section class="dashboard-welcome">
+    <h2>Welcome Back, {{ request.user.first_name|default:request.user.username }}!</h2>
+    <p>
+        Here's an overview of your employees, tasks, and daily work reports.
+        Manage your team's progress from one place.
+    </p>
+</section>
+
+
+<!-- Employee Overview -->
+<section class="dashboard-section">
+
+    <div class="section-heading">
+        <div>
+            <h3>Employee Overview</h3>
+            <p>Monitor your employee accounts and team activity.</p>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <span class="stat-label">Total Employees</span>
+                <div class="stat-icon icon-blue">
+                    <i class="bi bi-people"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ total_employees|default:0 }}</div>
+            <div class="stat-description">Registered employee profiles</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <span class="stat-label">Active Employees</span>
+                <div class="stat-icon icon-green">
+                    <i class="bi bi-person-check"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ active_employees|default:0 }}</div>
+            <div class="stat-description">Currently active accounts</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <span class="stat-label">Total Tasks</span>
+                <div class="stat-icon icon-purple">
+                    <i class="bi bi-list-task"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ total_tasks|default:0 }}</div>
+            <div class="stat-description">Tasks assigned to employees</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <span class="stat-label">Overdue Tasks</span>
+                <div class="stat-icon icon-red">
+                    <i class="bi bi-calendar-x"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ overdue_tasks|default:0 }}</div>
+            <div class="stat-description">Tasks past their due date</div>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- Task Overview -->
+<section class="dashboard-section">
+
+    <div class="section-heading">
+        <div>
+            <h3>Task Overview</h3>
+            <p>Track the current status of all assigned tasks.</p>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <span class="stat-label">Pending Tasks</span>
+                <div class="stat-icon icon-orange">
+                    <i class="bi bi-hourglass-split"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ pending_tasks|default:0 }}</div>
+            <div class="stat-description">Tasks waiting to start</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <span class="stat-label">In Progress</span>
+                <div class="stat-icon icon-blue">
+                    <i class="bi bi-arrow-repeat"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ in_progress_tasks|default:0 }}</div>
+            <div class="stat-description">Currently being worked on</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <span class="stat-label">Completed Tasks</span>
+                <div class="stat-icon icon-green">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ completed_tasks|default:0 }}</div>
+            <div class="stat-description">Successfully completed tasks</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <span class="stat-label">Average Progress</span>
+                <div class="stat-icon icon-purple">
+                    <i class="bi bi-graph-up-arrow"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ average_task_progress|default:0 }}%</div>
+            <div class="stat-description">Average task completion</div>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- Daily Report Overview -->
+<section class="dashboard-section">
+
+    <div class="section-heading">
+        <div>
+            <h3>Daily Work Reports</h3>
+            <p>Monitor report submissions and review progress.</p>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <span class="stat-label">Today's Reports</span>
+                <div class="stat-icon icon-blue">
+                    <i class="bi bi-file-earmark-text"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ total_reports_today|default:0 }}</div>
+            <div class="stat-description">Reports submitted today</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <span class="stat-label">Pending Review</span>
+                <div class="stat-icon icon-orange">
+                    <i class="bi bi-clipboard-check"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ pending_review_reports|default:0 }}</div>
+            <div class="stat-description">Reports awaiting admin review</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <span class="stat-label">Approved Reports</span>
+                <div class="stat-icon icon-green">
+                    <i class="bi bi-patch-check"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ approved_reports|default:0 }}</div>
+            <div class="stat-description">Reports approved by admin</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <span class="stat-label">Revision Required</span>
+                <div class="stat-icon icon-purple">
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ revision_reports|default:0 }}</div>
+            <div class="stat-description">Reports requiring employee updates</div>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- Charts and Quick Access -->
+<section class="dashboard-section">
+
+    <div class="dashboard-grid">
+
+        <!-- Task Chart -->
+        <div class="dashboard-panel">
+
+            <div class="section-heading">
+                <div>
+                    <h3>Task Distribution</h3>
+                    <p>Current task status breakdown.</p>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="taskDistributionChart"></canvas>
+            </div>
+
+        </div>
+
+
+        <!-- Quick Access -->
+        <div class="dashboard-panel">
+
+            <div class="section-heading">
+                <div>
+                    <h3>Quick Access</h3>
+                    <p>Navigate to important management sections.</p>
+                </div>
+            </div>
+
+            <div class="quick-access-grid">
+
+                <a href="{% url 'employees:employee_list' %}"
+                   class="quick-access-card">
+                    <div class="quick-access-icon">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <div>
+                        <h4>Employees</h4>
+                        <p>Manage employee profiles</p>
+                    </div>
+                </a>
+
+                <a href="{% url 'tasks:task_list' %}"
+                   class="quick-access-card">
+                    <div class="quick-access-icon">
+                        <i class="bi bi-list-task"></i>
+                    </div>
+                    <div>
+                        <h4>Task Management</h4>
+                        <p>Create and assign tasks</p>
+                    </div>
+                </a>
+
+                <div class="quick-access-card">
+                    <div class="quick-access-icon">
+                        <i class="bi bi-file-earmark-text"></i>
+                    </div>
+                    <div>
+                        <h4>Daily Reports</h4>
+                        <p>Daily report management</p>
+                    </div>
+                </div>
+
+                <div class="quick-access-card">
+                    <div class="quick-access-icon">
+                        <i class="bi bi-bar-chart"></i>
+                    </div>
+                    <div>
+                        <h4>Performance</h4>
+                        <p>Monitor team performance</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <p class="dashboard-footer-note">
+                Additional report and analytics navigation can be connected
+                when those sections are ready.
+            </p>
+
+        </div>
+
+    </div>
+</section>
+
+
+<!-- Recent Tasks -->
+<section class="dashboard-section">
+
+    <div class="section-heading">
+        <div>
+            <h3>Recent Tasks</h3>
+            <p>Latest tasks created in the system.</p>
+        </div>
+
+        <a href="{% url 'tasks:task_list' %}"
+           class="btn btn-sm btn-outline-primary">
+            View All Tasks
+        </a>
+    </div>
+
+    <div class="dashboard-panel">
+        <div class="dashboard-table-wrapper">
+
+            <table class="dashboard-table">
+
+                <thead>
+                    <tr>
+                        <th>Task</th>
+                        <th>Assigned To</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Progress</th>
+                        <th>Due Date</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for task in recent_tasks %}
+                    <tr>
+
+                        <td>
+                            <div class="table-primary-text">
+                                {{ task.title }}
+                            </div>
+                        </td>
+
+                        <td>
+                            {{ task.assigned_to.user.get_full_name|default:task.assigned_to.user.username }}
+                        </td>
+
+                        <td>
+                            <span class="priority-badge priority-{{ task.priority|lower }}">
+                                {{ task.get_priority_display }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="status-badge
+                                {% if task.status == 'PENDING' %}status-pending
+                                {% elif task.status == 'IN_PROGRESS' %}status-in-progress
+                                {% elif task.status == 'COMPLETED' %}status-completed
+                                {% elif task.status == 'ON_HOLD' %}status-on-hold
+                                {% endif %}">
+                                {{ task.get_status_display }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="progress-info">
+                                <div class="progress-label">
+                                    <span>Progress</span>
+                                    <strong>{{ task.progress }}%</strong>
+                                </div>
+                                <div class="progress-track">
+                                    <div class="progress-fill"
+                                         style="width: {{ task.progress }}%;">
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td>{{ task.due_date|date:"d M Y" }}</td>
+
+                    </tr>
+
+                    {% empty %}
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <i class="bi bi-inbox"></i>
+                                No tasks have been created yet.
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</section>
+
+
+<!-- Recent Daily Reports -->
+<section class="dashboard-section">
+
+    <div class="section-heading">
+        <div>
+            <h3>Recent Daily Reports</h3>
+            <p>Latest daily reports submitted by employees.</p>
+        </div>
+    </div>
+
+    <div class="dashboard-panel">
+
+        <div class="dashboard-table-wrapper">
+
+            <table class="dashboard-table">
+
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Report Date</th>
+                        <th>Submitted At</th>
+                        <th>Status</th>
+                        <th>Last Reviewed</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for report in recent_reports %}
+                    <tr>
+
+                        <td>
+                            <div class="table-primary-text">
+                                {{ report.employee.user.get_full_name|default:report.employee.user.username }}
+                            </div>
+                        </td>
+
+                        <td>{{ report.report_date|date:"d M Y" }}</td>
+
+                        <td>
+                            {% if report.submitted_at %}
+                                {{ report.submitted_at|date:"d M Y, h:i A" }}
+                            {% else %}
+                                <span class="table-secondary-text">Not submitted</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <span class="status-badge
+                                {% if report.status == 'DRAFT' %}status-pending
+                                {% elif report.status == 'SUBMITTED' %}status-submitted
+                                {% elif report.status == 'APPROVED' %}status-approved
+                                {% elif report.status == 'REJECTED' %}status-rejected
+                                {% elif report.status == 'REVISION' %}status-revision
+                                {% endif %}">
+                                {{ report.get_status_display }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {% if report.reviewed_at %}
+                                {{ report.reviewed_at|date:"d M Y, h:i A" }}
+                            {% else %}
+                                <span class="table-secondary-text">Not reviewed</span>
+                            {% endif %}
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+                    <tr>
+                        <td colspan="5">
+                            <div class="empty-state">
+                                <i class="bi bi-file-earmark-text"></i>
+                                No daily reports are available yet.
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const chartElement = document.getElementById("taskDistributionChart");
+
+    if (!chartElement) {
+        return;
+    }
+
+    const pending = Number("{{ pending_tasks|default:0 }}");
+    const inProgress = Number("{{ in_progress_tasks|default:0 }}");
+    const completed = Number("{{ completed_tasks|default:0 }}");
+    const total = Number("{{ total_tasks|default:0 }}");
+
+    const onHold = Math.max(
+        0,
+        total - pending - inProgress - completed
+    );
+
+    new Chart(chartElement, {
+        type: "doughnut",
+
+        data: {
+            labels: [
+                "Pending",
+                "In Progress",
+                "Completed",
+                "On Hold"
+            ],
+
+            datasets: [{
+                data: [
+                    pending,
+                    inProgress,
+                    completed,
+                    onHold
+                ],
+
+                backgroundColor: [
+                    "#f97316",
+                    "#3b82f6",
+                    "#10b981",
+                    "#8b5cf6"
+                ],
+
+                borderWidth: 0,
+                hoverOffset: 7
+            }]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            cutout: "68%",
+
+            plugins: {
+                legend: {
+                    position: "bottom",
+
+                    labels: {
+                        usePointStyle: true,
+                        pointStyle: "circle",
+                        padding: 20,
+                        font: {
+                            size: 12
+                        }
+                    }
+                },
+
+                tooltip: {
+                    enabled: true
+                }
+            }
+        }
+    });
+
+});
+</script>
+{% endblock %}
